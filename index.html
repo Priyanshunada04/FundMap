@@ -18,7 +18,7 @@ html { scroll-behavior: smooth; }
   --ink2: #3D3530;
   --muted: #8A7E74;
   --border: #D8D0C6;
-  --accent: #C84B31;
+  --accent: #33B50C;
   --accent2: #2A6B4A;
   --accent3: #1E4FA8;
   --gold: #B8860B;
@@ -50,39 +50,70 @@ body::after {
 /* ── NAVIGATION ── */
 .nav {
   position: sticky; top: 0; z-index: 100;
-  background: rgba(245,242,237,0.92);
+  background: #000000;
   backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
   padding: 0 40px;
   display: flex; align-items: center; justify-content: space-between;
   height: 60px;
 }
-.nav-logo { font-family: var(--font-display); font-weight: 800; font-size: 20px; color: var(--ink); cursor: pointer; letter-spacing: -0.02em; display: flex; align-items: center; gap: 8px; }
-.nav-logo span { color: var(--accent); }
+.nav-logo { font-family: var(--font-display); font-weight: 800; font-size: 20px; color: #ffffff; cursor: pointer; letter-spacing: -0.02em; display: flex; align-items: center; gap: 0px; }
+.nav-logo span { color: #33B50C; }
 .nav-links { display: flex; align-items: center; gap: 4px; }
-.nav-link { font-family: var(--font-body); font-size: 13px; font-weight: 500; color: var(--ink2); padding: 6px 14px; border-radius: 20px; cursor: pointer; border: none; background: none; transition: background 0.15s, color 0.15s; }
-.nav-link:hover { background: var(--bg2); }
-.nav-link.active { background: var(--ink); color: #fff; }
+.nav-link { font-family: var(--font-body); font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.75); padding: 6px 14px; border-radius: 20px; cursor: pointer; border: none; background: none; transition: background 0.15s, color 0.15s; }
+.nav-link:hover { background: rgba(255,255,255,0.1); color: #fff; }
+.nav-link.active { background: rgba(255,255,255,0.15); color: #fff; }
 .nav-link.hidden { display: none; }
 
 /* Auth button in nav */
-.nav-auth-btn { background: var(--accent); color: #fff; font-family: var(--font-display); font-size: 13px; font-weight: 600; padding: 8px 20px; border-radius: 20px; border: none; cursor: pointer; letter-spacing: 0.02em; transition: opacity 0.15s, transform 0.1s; }
-.nav-auth-btn:hover { opacity: 0.9; transform: translateY(-1px); }
-
-/* User menu */
-.user-menu { position: relative; }
-.user-avatar {
-  width: 36px; height: 36px; border-radius: 50%;
-  background: var(--ink);
+.nav-auth-btn {
+  background: transparent;
   color: #fff;
   font-family: var(--font-display);
-  font-weight: 700; font-size: 13px;
-  border: none; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: opacity 0.15s;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 18px;
+  border-radius: 6px;
+  border: 1.5px solid rgba(255,255,255,0.3);
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: all 0.15s;
 }
-.user-avatar:hover { opacity: 0.85; }
-.user-avatar.investor { background: var(--accent3); }
+.nav-auth-btn:hover {
+  border-color: #33B50C;
+  color: #33B50C;
+  background: rgba(51,181,12,0.06);
+}
+
+/* User menu */
+.user-menu { position: relative; display: flex; align-items: center; }
+.user-avatar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px 5px 6px;
+  border-radius: 6px;
+  border: 1.5px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.05);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  height: 36px;
+}
+.user-avatar:hover { border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.09); }
+.user-avatar-initials {
+  width: 26px; height: 26px; border-radius: 4px;
+  background: #33B50C;
+  color: #fff;
+  font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.user-avatar.investor .user-avatar-initials { background: var(--accent3); }
+.user-avatar-chevron { font-size: 9px; opacity: 0.4; margin-left: 2px; }
 
 .user-dropdown {
   position: absolute; right: 0; top: calc(100% + 8px);
@@ -128,7 +159,7 @@ body::after {
 .badge-live { background: #D4EDDA; color: #155724; }
 .badge-rejected { background: #F8D7DA; color: #721C24; }
 .badge-verified { background: #D1ECF1; color: #0C5460; }
-.badge-new { background: #C84B31; color: #fff; }
+.badge-new { background: #33B50C; color: #fff; }
 .badge-pro { background: linear-gradient(135deg, #B8860B, #DAA520); color: #fff; }
 
 .tag { display: inline-block; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 4px; background: var(--tag-bg); color: var(--ink2); border: 1px solid var(--border); }
@@ -136,7 +167,7 @@ body::after {
 /* ── BUTTONS ── */
 .btn { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-display); font-weight: 600; font-size: 14px; padding: 10px 22px; border-radius: 6px; border: none; cursor: pointer; transition: all 0.15s; letter-spacing: 0.01em; text-decoration: none; }
 .btn-primary { background: var(--accent); color: #fff; }
-.btn-primary:hover { background: #a83d28; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(200,75,49,0.3); }
+.btn-primary:hover { background: #28920A; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(51,181,12,0.3); }
 .btn-secondary { background: var(--surface); color: var(--ink); border: 1px solid var(--border); }
 .btn-secondary:hover { background: var(--bg2); }
 .btn-ghost { background: transparent; color: var(--ink2); border: 1px solid var(--border); }
@@ -307,7 +338,7 @@ body::after {
 .elig-type-toggle { display: flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; flex-shrink: 0; }
 .elig-type-btn { padding: 8px 10px; font-size: 13px; font-weight: 700; border: none; background: none; cursor: pointer; transition: background 0.1s; color: var(--muted); }
 .elig-type-btn.check.active { background: rgba(42,107,74,0.1); color: var(--accent2); }
-.elig-type-btn.cross.active { background: rgba(200,75,49,0.1); color: var(--accent); }
+.elig-type-btn.cross.active { background: rgba(51,181,12,0.1); color: var(--accent); }
 .elig-input { flex: 1; padding: 8px 12px; border: 1.5px solid var(--border); border-radius: 6px; font-family: var(--font-body); font-size: 13px; outline: none; background: var(--bg); }
 .elig-input:focus { border-color: var(--accent2); }
 .elig-remove { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 16px; padding: 4px; flex-shrink: 0; }
@@ -514,7 +545,7 @@ body::after {
 .tracker-card-deadline.soon { color: var(--accent); font-weight: 600; }
 .tracker-card-amount { font-family: var(--font-display); font-weight: 700; font-size: 14px; color: var(--accent2); margin-top: 8px; }
 .tracker-card-note { font-size: 11px; color: var(--muted); margin-top: 8px; font-style: italic; background: var(--bg2); padding: 6px 8px; border-radius: 6px; }
-.alert-bar { background: rgba(200,75,49,0.08); border: 1px solid rgba(200,75,49,0.2); border-radius: 8px; padding: 12px 16px; display: flex; align-items: center; gap: 10px; margin-bottom: 24px; font-size: 13px; color: var(--accent); }
+.alert-bar { background: rgba(51,181,12,0.08); border: 1px solid rgba(51,181,12,0.2); border-radius: 8px; padding: 12px 16px; display: flex; align-items: center; gap: 10px; margin-bottom: 24px; font-size: 13px; color: var(--accent); }
 
 /* ═══════════════════════════════════
    INVESTOR DASHBOARD
@@ -594,6 +625,435 @@ body::after {
   .form-row, .form-row-3 { grid-template-columns: 1fr; }
   .auth-modal, .submit-modal { margin: 10px; }
   .submit-modal-header, .submit-modal-body, .submit-modal-footer { padding: 20px; }
+}
+
+/* ═══════════════════════════════════════════════════
+   ADMIN PANEL — Dark Control Room Aesthetic
+═══════════════════════════════════════════════════ */
+#view-admin {
+  background: #0E0F11;
+  min-height: 100vh;
+  color: #E8E6E1;
+  font-family: var(--font-body);
+}
+
+.admin-layout {
+  display: flex;
+  min-height: calc(100vh - 60px);
+}
+
+/* Sidebar */
+.admin-sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: #0A0B0D;
+  border-right: 1px solid rgba(255,255,255,0.06);
+  padding: 28px 0;
+  position: sticky;
+  top: 60px;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+}
+
+.admin-sidebar-section {
+  margin-bottom: 28px;
+  padding: 0 16px;
+}
+
+.admin-sidebar-label {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.2);
+  margin-bottom: 8px;
+  padding-left: 8px;
+}
+
+.admin-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.45);
+  transition: all 0.12s;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  margin-bottom: 2px;
+}
+.admin-nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.8); }
+.admin-nav-item.active { background: rgba(255,255,255,0.08); color: #fff; }
+.admin-nav-item .nav-icon { font-size: 15px; width: 20px; text-align: center; }
+.admin-nav-badge {
+  margin-left: auto;
+  background: var(--accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 10px;
+  font-family: var(--font-display);
+}
+.admin-nav-badge.gold { background: var(--gold); }
+.admin-nav-badge.green { background: var(--accent2); }
+
+/* Main content */
+.admin-main {
+  flex: 1;
+  min-width: 0;
+  padding: 36px 40px;
+}
+
+/* Admin panels (tabs within admin) */
+.admin-panel { display: none; }
+.admin-panel.active { display: block; }
+
+/* Admin page header */
+.admin-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.admin-page-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+.admin-page-sub { font-size: 13px; color: rgba(255,255,255,0.35); margin-top: 4px; }
+
+/* KPI row */
+.admin-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-bottom: 32px;
+}
+.admin-kpi {
+  background: #161719;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 10px;
+  padding: 18px 20px;
+  transition: border-color 0.15s;
+}
+.admin-kpi:hover { border-color: rgba(255,255,255,0.14); }
+.admin-kpi-num {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.admin-kpi-label { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 6px; }
+.admin-kpi-delta { font-size: 11px; font-weight: 600; margin-top: 4px; }
+.admin-kpi-delta.up { color: #33B50C; }
+.admin-kpi-delta.warn { color: var(--gold); }
+.admin-kpi-delta.down { color: var(--accent); }
+
+/* Submission review queue */
+.admin-queue-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.admin-queue-title {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+}
+.admin-filter-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+.admin-filter-pill {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.4);
+  cursor: pointer;
+  background: none;
+  transition: all 0.12s;
+  font-family: var(--font-display);
+  letter-spacing: 0.03em;
+}
+.admin-filter-pill:hover { border-color: rgba(255,255,255,0.25); color: rgba(255,255,255,0.7); }
+.admin-filter-pill.active { border-color: rgba(255,255,255,0.5); color: #fff; background: rgba(255,255,255,0.08); }
+
+/* Review card */
+.review-queue-card {
+  background: #161719;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 12px;
+  padding: 22px 24px;
+  margin-bottom: 10px;
+  transition: border-color 0.15s;
+  animation: fadeInCard 0.25s ease both;
+}
+.review-queue-card:hover { border-color: rgba(255,255,255,0.14); }
+
+@keyframes fadeInCard {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.rqc-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 12px; flex-wrap: wrap; }
+.rqc-left { flex: 1; min-width: 0; }
+.rqc-name { font-family: var(--font-display); font-weight: 700; font-size: 15px; color: #fff; margin-bottom: 3px; }
+.rqc-org { font-size: 12px; color: rgba(255,255,255,0.4); }
+.rqc-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+
+.rqc-meta { display: flex; gap: 16px; margin-bottom: 12px; flex-wrap: wrap; }
+.rqc-meta-item { font-size: 12px; color: rgba(255,255,255,0.35); display: flex; align-items: center; gap: 5px; }
+.rqc-meta-item strong { color: rgba(255,255,255,0.65); }
+
+.rqc-desc { font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.6; margin-bottom: 14px; border-left: 2px solid rgba(255,255,255,0.08); padding-left: 12px; }
+
+.rqc-eligibility { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.rqc-elig-chip {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  display: flex; align-items: center; gap: 4px;
+}
+.rqc-elig-chip.ok { background: rgba(42,107,74,0.15); color: #4ade80; border: 1px solid rgba(42,107,74,0.2); }
+.rqc-elig-chip.no { background: rgba(51,181,12,0.12); color: #f87171; border: 1px solid rgba(51,181,12,0.2); }
+
+.rqc-submitter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.3);
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  flex-wrap: wrap;
+}
+
+/* Action buttons */
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.12s;
+  letter-spacing: 0.02em;
+}
+.action-btn-approve { background: rgba(42,107,74,0.2); color: #4ade80; border: 1px solid rgba(42,107,74,0.3); }
+.action-btn-approve:hover { background: rgba(42,107,74,0.35); transform: translateY(-1px); }
+.action-btn-reject { background: rgba(51,181,12,0.15); color: #f87171; border: 1px solid rgba(51,181,12,0.25); }
+.action-btn-reject:hover { background: rgba(51,181,12,0.28); transform: translateY(-1px); }
+.action-btn-flag { background: rgba(184,134,11,0.12); color: #fbbf24; border: 1px solid rgba(184,134,11,0.2); }
+.action-btn-flag:hover { background: rgba(184,134,11,0.22); transform: translateY(-1px); }
+.action-btn-view { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.6); border: 1px solid rgba(255,255,255,0.1); }
+.action-btn-view:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+/* Admin badge */
+.admin-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+.asb-pending { background: rgba(184,134,11,0.15); color: #fbbf24; border: 1px solid rgba(184,134,11,0.2); }
+.asb-live { background: rgba(42,107,74,0.15); color: #4ade80; border: 1px solid rgba(42,107,74,0.2); }
+.asb-rejected { background: rgba(51,181,12,0.12); color: #f87171; border: 1px solid rgba(51,181,12,0.2); }
+.asb-flagged { background: rgba(239,68,68,0.15); color: #fca5a5; border: 1px solid rgba(239,68,68,0.25); }
+
+/* Users table */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.admin-table th {
+  text-align: left;
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.25);
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.admin-table td {
+  padding: 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.6);
+  vertical-align: middle;
+}
+.admin-table tr:hover td { background: rgba(255,255,255,0.02); }
+.admin-table .td-name { color: #fff; font-weight: 500; }
+.admin-table .td-type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.td-type-founder { background: rgba(42,107,74,0.12); color: #4ade80; }
+.td-type-investor { background: rgba(30,79,168,0.15); color: #93c5fd; }
+.td-type-admin { background: rgba(51,181,12,0.15); color: #fca5a5; }
+
+/* Activity feed */
+.activity-feed { display: flex; flex-direction: column; gap: 0; }
+.activity-item {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.activity-item:last-child { border-bottom: none; }
+.activity-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.ad-green { background: rgba(42,107,74,0.2); }
+.ad-red { background: rgba(51,181,12,0.15); }
+.ad-gold { background: rgba(184,134,11,0.15); }
+.ad-blue { background: rgba(30,79,168,0.15); }
+.activity-content { flex: 1; }
+.activity-text { font-size: 13px; color: rgba(255,255,255,0.6); line-height: 1.5; }
+.activity-text strong { color: rgba(255,255,255,0.85); }
+.activity-time { font-size: 11px; color: rgba(255,255,255,0.2); margin-top: 3px; }
+
+/* Rejection modal */
+.reject-modal {
+  background: #161719;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 440px;
+  margin: 20px;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.7);
+  transform: translateY(20px) scale(0.97);
+  transition: transform 0.25s ease;
+  overflow: hidden;
+}
+.modal-overlay.open .reject-modal { transform: translateY(0) scale(1); }
+.reject-modal-header { padding: 24px 28px 0; }
+.reject-modal-header h3 { font-family: var(--font-display); font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+.reject-modal-header p { font-size: 13px; color: rgba(255,255,255,0.4); }
+.reject-modal-body { padding: 20px 28px; }
+.reject-reason-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  cursor: pointer;
+  margin-bottom: 8px;
+  transition: all 0.12s;
+}
+.reject-reason-btn:hover { background: rgba(255,255,255,0.08); color: #fff; border-color: rgba(255,255,255,0.12); }
+.reject-reason-btn.selected { background: rgba(51,181,12,0.15); color: #f87171; border-color: rgba(51,181,12,0.3); }
+.reject-modal-footer { padding: 16px 28px 24px; display: flex; gap: 10px; justify-content: flex-end; }
+
+/* Admin empty state */
+.admin-empty {
+  text-align: center;
+  padding: 60px 20px;
+}
+.admin-empty-icon { font-size: 44px; margin-bottom: 16px; opacity: 0.3; }
+.admin-empty h3 { font-family: var(--font-display); font-size: 18px; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
+.admin-empty p { font-size: 13px; color: rgba(255,255,255,0.25); }
+
+/* Admin search */
+.admin-search {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 9px 14px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: #fff;
+  outline: none;
+  width: 240px;
+  transition: border-color 0.15s;
+}
+.admin-search::placeholder { color: rgba(255,255,255,0.25); }
+.admin-search:focus { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.07); }
+
+/* Scrollable table wrapper */
+.admin-table-wrap {
+  background: #161719;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Section cards */
+.admin-card {
+  background: #161719;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.admin-card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.admin-card-title { font-family: var(--font-display); font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.6); letter-spacing: 0.04em; }
+.admin-card-body { padding: 20px; }
+
+/* Nav admin indicator */
+.nav-admin-badge {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 3px;
+  vertical-align: middle;
+  margin-left: 4px;
+  letter-spacing: 0.05em;
+  font-family: var(--font-display);
 }
 </style>
 </head>
@@ -812,6 +1272,31 @@ body::after {
   </div>
 </div>
 
+<!-- ══ REJECT REASON MODAL ══ -->
+<div class="modal-overlay" id="rejectModal">
+  <div class="reject-modal">
+    <div class="reject-modal-header">
+      <h3>Reject Submission</h3>
+      <p>Select a reason — this will be sent to the submitter.</p>
+    </div>
+    <div class="reject-modal-body">
+      <button class="reject-reason-btn" onclick="selectRejectReason(this)">🔍 Duplicate — we already have this opportunity listed</button>
+      <button class="reject-reason-btn" onclick="selectRejectReason(this)">📋 Incomplete information — key fields are missing or vague</button>
+      <button class="reject-reason-btn" onclick="selectRejectReason(this)">❌ Cannot verify — organisation or programme cannot be confirmed</button>
+      <button class="reject-reason-btn" onclick="selectRejectReason(this)">🚫 Ineligible type — does not meet FundMap listing standards</button>
+      <button class="reject-reason-btn" onclick="selectRejectReason(this)">💀 Expired — this programme has already closed or ended</button>
+      <div style="margin-top:12px">
+        <label style="font-size:11px;color:rgba(255,255,255,0.35);display:block;margin-bottom:6px;font-weight:600;letter-spacing:0.04em">CUSTOM NOTE (OPTIONAL)</label>
+        <textarea id="rejectCustomNote" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:10px 12px;font-family:var(--font-body);font-size:13px;color:rgba(255,255,255,0.7);outline:none;min-height:60px;resize:vertical" placeholder="Add any additional context for the submitter..."></textarea>
+      </div>
+    </div>
+    <div class="reject-modal-footer">
+      <button class="action-btn action-btn-view" onclick="closeModal('rejectModal')">Cancel</button>
+      <button class="action-btn action-btn-reject" onclick="confirmReject()">Confirm Rejection</button>
+    </div>
+  </div>
+</div>
+
 <!-- ══════════════ NAVBAR ══════════════ -->
 <nav class="nav" id="mainNav">
   <div class="nav-logo" onclick="showView('landing')">Fund<span>Map</span></div>
@@ -820,11 +1305,16 @@ body::after {
     <button class="nav-link hidden" id="nav-profile" onclick="showView('profile')">My Profile</button>
     <button class="nav-link hidden" id="nav-tracker" onclick="showView('tracker')">Tracker</button>
     <button class="nav-link hidden" id="nav-investor" onclick="showView('investor')">Dashboard</button>
+    <button class="nav-link hidden" id="nav-admin" onclick="showView('admin')" style="color:var(--accent)">⚡ Admin<span class="nav-admin-badge">SUPER</span></button>
   </div>
   <div id="nav-right">
     <button class="nav-auth-btn" id="nav-signin-btn" onclick="openModal('authModal')">Sign In →</button>
     <div class="user-menu hidden" id="user-menu">
-      <button class="user-avatar" id="user-avatar-btn" onclick="toggleUserMenu()"></button>
+      <button class="user-avatar" id="user-avatar-btn" onclick="toggleUserMenu()">
+        <span class="user-avatar-initials" id="user-avatar-initials"></span>
+        <span id="user-avatar-name"></span>
+        <span class="user-avatar-chevron">▾</span>
+      </button>
       <div class="user-dropdown" id="user-dropdown">
         <div class="dropdown-header">
           <div class="dropdown-name" id="dropdown-name"></div>
@@ -834,6 +1324,7 @@ body::after {
         <button class="dropdown-item" id="dropdown-nav-profile" onclick="showView('profile');toggleUserMenu()">📋 My Profile</button>
         <button class="dropdown-item" id="dropdown-nav-tracker" onclick="showView('tracker');toggleUserMenu()">📊 Tracker</button>
         <button class="dropdown-item" id="dropdown-nav-investor" onclick="showView('investor');toggleUserMenu()" style="display:none">🏦 Dashboard</button>
+        <button class="dropdown-item" id="dropdown-nav-admin" onclick="showView('admin');toggleUserMenu()" style="display:none;color:var(--accent)">⚡ Admin Panel</button>
         <div class="dropdown-divider"></div>
         <button class="dropdown-item danger" onclick="handleLogout()">→ Log Out</button>
       </div>
@@ -1119,6 +1610,191 @@ body::after {
   </div>
 </div>
 
+<!-- ═══════════════════════════════════
+     VIEW: ADMIN PANEL
+═══════════════════════════════════ -->
+<div class="view" id="view-admin">
+  <div class="admin-layout">
+
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <div class="admin-sidebar-section">
+        <div class="admin-sidebar-label">Overview</div>
+        <button class="admin-nav-item active" id="anav-overview" onclick="switchAdminPanel('overview')">
+          <span class="nav-icon">📊</span> Overview
+        </button>
+      </div>
+      <div class="admin-sidebar-section">
+        <div class="admin-sidebar-label">Moderation</div>
+        <button class="admin-nav-item" id="anav-queue" onclick="switchAdminPanel('queue')">
+          <span class="nav-icon">📋</span> Review Queue
+          <span class="admin-nav-badge" id="admin-queue-badge">0</span>
+        </button>
+        <button class="admin-nav-item" id="anav-live" onclick="switchAdminPanel('live')">
+          <span class="nav-icon">🟢</span> Live Listings
+          <span class="admin-nav-badge green" id="admin-live-badge">0</span>
+        </button>
+        <button class="admin-nav-item" id="anav-flagged" onclick="switchAdminPanel('flagged')">
+          <span class="nav-icon">⚑</span> Flagged
+          <span class="admin-nav-badge gold" id="admin-flag-badge">0</span>
+        </button>
+        <button class="admin-nav-item" id="anav-rejected" onclick="switchAdminPanel('rejected')">
+          <span class="nav-icon">✗</span> Rejected
+        </button>
+      </div>
+      <div class="admin-sidebar-section">
+        <div class="admin-sidebar-label">Platform</div>
+        <button class="admin-nav-item" id="anav-users" onclick="switchAdminPanel('users')">
+          <span class="nav-icon">👥</span> Users
+        </button>
+        <button class="admin-nav-item" id="anav-activity" onclick="switchAdminPanel('activity')">
+          <span class="nav-icon">⚡</span> Activity Log
+        </button>
+      </div>
+      <div class="admin-sidebar-section" style="margin-top:auto;padding-top:20px;border-top:1px solid rgba(255,255,255,0.06)">
+        <button class="admin-nav-item" onclick="showView('landing')">
+          <span class="nav-icon">←</span> Back to App
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main content area -->
+    <main class="admin-main">
+
+      <!-- ── OVERVIEW ── -->
+      <div class="admin-panel active" id="apanel-overview">
+        <div class="admin-page-header">
+          <div>
+            <div class="admin-page-title">Command Centre</div>
+            <div class="admin-page-sub">FundMap platform health — live data from localStorage</div>
+          </div>
+          <button class="action-btn action-btn-view" onclick="renderAdminDashboard()">↻ Refresh</button>
+        </div>
+
+        <div class="admin-kpi-row" id="admin-kpis">
+          <!-- rendered by JS -->
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <div class="admin-card-title">PENDING REVIEW</div>
+              <button class="action-btn action-btn-view" style="font-size:11px;padding:5px 10px" onclick="switchAdminPanel('queue')">View all →</button>
+            </div>
+            <div class="admin-card-body" id="overview-pending-list">
+              <div class="admin-empty"><div class="admin-empty-icon">✓</div><h3>Queue is clear</h3><p>No submissions awaiting review</p></div>
+            </div>
+          </div>
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <div class="admin-card-title">ACTIVITY LOG</div>
+              <button class="action-btn action-btn-view" style="font-size:11px;padding:5px 10px" onclick="switchAdminPanel('activity')">View all →</button>
+            </div>
+            <div class="admin-card-body" id="overview-activity-list">
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-card" style="margin-top:20px">
+          <div class="admin-card-header">
+            <div class="admin-card-title">REGISTERED USERS — RECENT</div>
+            <button class="action-btn action-btn-view" style="font-size:11px;padding:5px 10px" onclick="switchAdminPanel('users')">All users →</button>
+          </div>
+          <div class="admin-card-body" style="padding:0">
+            <table class="admin-table" id="overview-users-table">
+              <thead><tr><th>Name</th><th>Email</th><th>Type</th><th>Joined</th></tr></thead>
+              <tbody id="overview-users-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── REVIEW QUEUE ── -->
+      <div class="admin-panel" id="apanel-queue">
+        <div class="admin-page-header">
+          <div>
+            <div class="admin-page-title">Review Queue</div>
+            <div class="admin-page-sub">Investor submissions awaiting approval before going live</div>
+          </div>
+          <div class="admin-filter-pills">
+            <button class="admin-filter-pill active" onclick="setQueueFilter('pending',this)">Pending</button>
+            <button class="admin-filter-pill" onclick="setQueueFilter('all',this)">All submissions</button>
+          </div>
+        </div>
+        <div id="queue-list"></div>
+      </div>
+
+      <!-- ── LIVE LISTINGS ── -->
+      <div class="admin-panel" id="apanel-live">
+        <div class="admin-page-header">
+          <div>
+            <div class="admin-page-title">Live Listings</div>
+            <div class="admin-page-sub">Approved investor-submitted opportunities currently visible to founders</div>
+          </div>
+          <input type="text" class="admin-search" placeholder="Search live listings..." oninput="renderLiveListings(this.value)">
+        </div>
+        <div id="live-list"></div>
+      </div>
+
+      <!-- ── FLAGGED ── -->
+      <div class="admin-panel" id="apanel-flagged">
+        <div class="admin-page-header">
+          <div>
+            <div class="admin-page-title">Flagged for Review</div>
+            <div class="admin-page-sub">Listings founders have flagged as potentially outdated or inaccurate</div>
+          </div>
+        </div>
+        <div id="flagged-list"></div>
+      </div>
+
+      <!-- ── REJECTED ── -->
+      <div class="admin-panel" id="apanel-rejected">
+        <div class="admin-page-header">
+          <div>
+            <div class="admin-page-title">Rejected Submissions</div>
+            <div class="admin-page-sub">Submissions that did not meet listing standards</div>
+          </div>
+        </div>
+        <div id="rejected-list"></div>
+      </div>
+
+      <!-- ── USERS ── -->
+      <div class="admin-panel" id="apanel-users">
+        <div class="admin-page-header">
+          <div>
+            <div class="admin-page-title">User Management</div>
+            <div class="admin-page-sub">All registered accounts on FundMap</div>
+          </div>
+          <input type="text" class="admin-search" placeholder="Search users..." oninput="renderUsersTable(this.value)">
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead><tr><th>Name</th><th>Email</th><th>Type</th><th>Submissions</th><th>Joined</th><th>Actions</th></tr></thead>
+            <tbody id="users-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── ACTIVITY LOG ── -->
+      <div class="admin-panel" id="apanel-activity">
+        <div class="admin-page-header">
+          <div>
+            <div class="admin-page-title">Activity Log</div>
+            <div class="admin-page-sub">All moderation actions taken on this platform</div>
+          </div>
+          <button class="action-btn action-btn-reject" onclick="clearActivityLog()">Clear log</button>
+        </div>
+        <div class="admin-card">
+          <div class="admin-card-body" style="padding:0 20px">
+            <div class="activity-feed" id="activity-feed"></div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
 <script>
 // ═══════════════════════════════════════════
 // DATABASE (localStorage simulation)
@@ -1153,6 +1829,21 @@ const opportunities = [
 function showView(name) {
   const user = DB.getCurrentUser();
 
+  // Special: admin login check
+  if (name === 'admin') {
+    if (!user || (user.type !== 'admin' && user.email !== ADMIN_EMAIL)) {
+      showToast('Admin access required', 'error');
+      return;
+    }
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById('view-admin').classList.add('active');
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    document.getElementById('nav-admin').classList.add('active');
+    window.scrollTo(0,0);
+    switchAdminPanel('overview');
+    return;
+  }
+
   // Gate gated views
   if (['profile','tracker'].includes(name) && !user) {
     openModal('authModal');
@@ -1160,7 +1851,7 @@ function showView(name) {
   }
   if (name === 'investor') {
     if (!user) { openModal('authModal'); return; }
-    if (user.type !== 'investor') { showToast('This area is for investors','error'); return; }
+    if (user.type !== 'investor' && user.type !== 'admin') { showToast('This area is for investors','error'); return; }
   }
 
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -1218,6 +1909,17 @@ function handleSignIn() {
 
   if (!email || !password) { errEl.textContent = 'Please fill in all fields'; errEl.classList.add('show'); return; }
 
+  // Check for admin super-login
+  if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+    const adminUser = { id: 'admin_001', name: 'FundMap Admin', email: ADMIN_EMAIL, type: 'admin', createdAt: new Date().toISOString() };
+    DB.setCurrentUser(adminUser);
+    closeModal('authModal');
+    updateNavForUser(adminUser);
+    showToast('Welcome back, Admin ⚡', 'success');
+    setTimeout(() => showView('admin'), 400);
+    return;
+  }
+
   const users = DB.getUsers();
   const user = users.find(u => u.email === email && u.password === password);
 
@@ -1230,6 +1932,8 @@ function handleSignIn() {
 
   if (user.type === 'investor') {
     setTimeout(() => showView('investor'), 400);
+  } else if (user.type === 'admin') {
+    setTimeout(() => showView('admin'), 400);
   } else {
     setTimeout(() => showView('directory'), 400);
   }
@@ -1293,44 +1997,44 @@ function updateNavForUser(user) {
   const navProfile = document.getElementById('nav-profile');
   const navTracker = document.getElementById('nav-tracker');
   const navInvestor = document.getElementById('nav-investor');
+  const navAdmin = document.getElementById('nav-admin');
   const dropdownNavProfile = document.getElementById('dropdown-nav-profile');
   const dropdownNavTracker = document.getElementById('dropdown-nav-tracker');
   const dropdownNavInvestor = document.getElementById('dropdown-nav-investor');
+  const dropdownNavAdmin = document.getElementById('dropdown-nav-admin');
 
   if (user) {
     signinBtn.style.display = 'none';
     userMenu.classList.remove('hidden');
     const initials = user.name.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
-    avatarBtn.textContent = initials;
-    avatarBtn.className = 'user-avatar' + (user.type === 'investor' ? ' investor' : '');
+    const firstName = user.name.split(' ')[0];
+    document.getElementById('user-avatar-initials').textContent = initials;
+    document.getElementById('user-avatar-name').textContent = firstName;
+    avatarBtn.className = 'user-avatar' + (user.type === 'investor' ? ' investor' : '') + (user.type === 'admin' ? ' investor' : '');
 
     document.getElementById('dropdown-name').textContent = user.name;
     document.getElementById('dropdown-email').textContent = user.email;
     const typeEl = document.getElementById('dropdown-type');
-    typeEl.textContent = user.type === 'investor' ? '🏦 Investor / Funder' : '🚀 Founder';
-    typeEl.className = 'dropdown-type ' + user.type;
+    typeEl.textContent = user.type === 'investor' ? '🏦 Investor / Funder' : user.type === 'admin' ? '⚡ Super Admin' : '🚀 Founder';
+    typeEl.className = 'dropdown-type ' + (user.type === 'admin' ? 'investor' : user.type);
 
-    if (user.type === 'founder') {
-      navProfile.classList.remove('hidden');
-      navTracker.classList.remove('hidden');
-      navInvestor.classList.add('hidden');
-      dropdownNavProfile.style.display = 'flex';
-      dropdownNavTracker.style.display = 'flex';
-      dropdownNavInvestor.style.display = 'none';
-    } else {
-      navProfile.classList.add('hidden');
-      navTracker.classList.add('hidden');
-      navInvestor.classList.remove('hidden');
-      dropdownNavProfile.style.display = 'none';
-      dropdownNavTracker.style.display = 'none';
-      dropdownNavInvestor.style.display = 'flex';
-    }
+    const isAdmin = user.type === 'admin' || user.email === ADMIN_EMAIL;
+    const isInvestor = user.type === 'investor';
+    const isFounder = user.type === 'founder';
+
+    navProfile.classList.toggle('hidden', !isFounder);
+    navTracker.classList.toggle('hidden', !isFounder);
+    navInvestor.classList.toggle('hidden', !isInvestor && !isAdmin);
+    navAdmin.classList.toggle('hidden', !isAdmin);
+
+    dropdownNavProfile.style.display = isFounder ? 'flex' : 'none';
+    dropdownNavTracker.style.display = isFounder ? 'flex' : 'none';
+    dropdownNavInvestor.style.display = (isInvestor || isAdmin) ? 'flex' : 'none';
+    dropdownNavAdmin.style.display = isAdmin ? 'flex' : 'none';
   } else {
     signinBtn.style.display = '';
     userMenu.classList.add('hidden');
-    navProfile.classList.add('hidden');
-    navTracker.classList.add('hidden');
-    navInvestor.classList.add('hidden');
+    [navProfile, navTracker, navInvestor, navAdmin].forEach(n => n.classList.add('hidden'));
   }
 }
 
@@ -1696,8 +2400,447 @@ function showToast(msg, type = '') {
 }
 
 // ═══════════════════════════════════════════
-// INIT
+// ADMIN — DATA & STATE
 // ═══════════════════════════════════════════
+const ADMIN_EMAIL = 'admin@fundmap.io';
+const ADMIN_PASSWORD = 'admin2026';
+
+// Activity log stored in memory (resets on reload — by design for prototype)
+let activityLog = JSON.parse(localStorage.getItem('fundmap_activity') || '[]');
+
+function logActivity(icon, text, type = 'blue') {
+  activityLog.unshift({
+    icon, text, type,
+    time: new Date().toISOString()
+  });
+  if (activityLog.length > 100) activityLog = activityLog.slice(0, 100);
+  localStorage.setItem('fundmap_activity', JSON.stringify(activityLog));
+}
+
+let rejectTargetId = null;
+let selectedRejectReason = null;
+let currentQueueFilter = 'pending';
+
+// ═══════════════════════════════════════════
+// ADMIN — NAVIGATION
+// ═══════════════════════════════════════════
+function switchAdminPanel(name) {
+  document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('apanel-' + name).classList.add('active');
+  document.querySelectorAll('.admin-nav-item').forEach(i => i.classList.remove('active'));
+  const navEl = document.getElementById('anav-' + name);
+  if (navEl) navEl.classList.add('active');
+
+  // Render the relevant panel
+  if (name === 'overview') renderAdminDashboard();
+  if (name === 'queue') renderQueue();
+  if (name === 'live') renderLiveListings();
+  if (name === 'flagged') renderFlaggedListings();
+  if (name === 'rejected') renderRejectedListings();
+  if (name === 'users') renderUsersTable();
+  if (name === 'activity') renderActivityFeed();
+}
+
+// ═══════════════════════════════════════════
+// ADMIN — DASHBOARD OVERVIEW
+// ═══════════════════════════════════════════
+function renderAdminDashboard() {
+  const allSubs = DB.getSubmissions();
+  const allUsers = DB.getUsers();
+  const pending = allSubs.filter(s => s.status === 'pending');
+  const live = allSubs.filter(s => s.status === 'live');
+  const rejected = allSubs.filter(s => s.status === 'rejected');
+  const flagged = allSubs.filter(s => s.status === 'flagged');
+  const founders = allUsers.filter(u => u.type === 'founder');
+  const investors = allUsers.filter(u => u.type === 'investor');
+
+  // Update sidebar badges
+  document.getElementById('admin-queue-badge').textContent = pending.length;
+  document.getElementById('admin-live-badge').textContent = live.length;
+  document.getElementById('admin-flag-badge').textContent = flagged.length;
+
+  // KPIs
+  document.getElementById('admin-kpis').innerHTML = `
+    <div class="admin-kpi">
+      <div class="admin-kpi-num">${allUsers.length}</div>
+      <div class="admin-kpi-label">Total Users</div>
+      <div class="admin-kpi-delta up">↑ ${allUsers.length > 0 ? allUsers.length : 0} registered</div>
+    </div>
+    <div class="admin-kpi">
+      <div class="admin-kpi-num">${founders.length}</div>
+      <div class="admin-kpi-label">Founders</div>
+      <div class="admin-kpi-delta up">🚀 Active seekers</div>
+    </div>
+    <div class="admin-kpi">
+      <div class="admin-kpi-num">${investors.length}</div>
+      <div class="admin-kpi-label">Investors / Funders</div>
+      <div class="admin-kpi-delta ${investors.length > 0 ? 'up' : 'warn'}">🏦 ${investors.length > 0 ? 'Submitting' : 'None yet'}</div>
+    </div>
+    <div class="admin-kpi">
+      <div class="admin-kpi-num">${pending.length}</div>
+      <div class="admin-kpi-label">Pending Review</div>
+      <div class="admin-kpi-delta ${pending.length > 0 ? 'warn' : 'up'}">${pending.length > 0 ? '⏳ Needs attention' : '✓ Clear'}</div>
+    </div>
+    <div class="admin-kpi">
+      <div class="admin-kpi-num">${live.length + 6}</div>
+      <div class="admin-kpi-label">Live Opportunities</div>
+      <div class="admin-kpi-delta up">↑ ${live.length} community + 6 scraped</div>
+    </div>
+  `;
+
+  // Overview pending list
+  const pendingEl = document.getElementById('overview-pending-list');
+  if (pending.length === 0) {
+    pendingEl.innerHTML = `<div class="admin-empty"><div class="admin-empty-icon">✅</div><h3>Queue is clear</h3><p>No submissions awaiting review</p></div>`;
+  } else {
+    pendingEl.innerHTML = pending.slice(0, 3).map(s => `
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
+        <div>
+          <div style="font-size:13px;color:#fff;font-weight:600;margin-bottom:3px">${s.name}</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.35)">${s.org} · ${s.type} · ${s.geo}</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-shrink:0;margin-left:12px">
+          <button class="action-btn action-btn-approve" onclick="approveSubmission('${s.id}');renderAdminDashboard()">✓ Approve</button>
+          <button class="action-btn action-btn-reject" onclick="openRejectModal('${s.id}')">✗</button>
+        </div>
+      </div>`).join('') + (pending.length > 3 ? `<div style="text-align:center;padding-top:12px"><button class="action-btn action-btn-view" onclick="switchAdminPanel('queue')">View ${pending.length - 3} more →</button></div>` : '');
+  }
+
+  // Overview activity
+  const actEl = document.getElementById('overview-activity-list');
+  if (activityLog.length === 0) {
+    actEl.innerHTML = `<div class="admin-empty"><div class="admin-empty-icon">⚡</div><h3>No activity yet</h3><p>Actions will appear here</p></div>`;
+  } else {
+    actEl.innerHTML = activityLog.slice(0, 5).map(a => renderActivityItem(a)).join('');
+  }
+
+  // Overview users table
+  const tbody = document.getElementById('overview-users-tbody');
+  const recent = allUsers.slice(-5).reverse();
+  tbody.innerHTML = recent.length === 0
+    ? `<tr><td colspan="4" style="text-align:center;color:rgba(255,255,255,0.2);padding:24px">No users registered yet</td></tr>`
+    : recent.map(u => `
+      <tr>
+        <td class="td-name">${u.name}</td>
+        <td>${u.email}</td>
+        <td><span class="td-type-badge td-type-${u.type}">${u.type === 'founder' ? '🚀' : '🏦'} ${u.type}</span></td>
+        <td>${formatDate(u.createdAt)}</td>
+      </tr>`).join('');
+}
+
+// ═══════════════════════════════════════════
+// ADMIN — REVIEW QUEUE
+// ═══════════════════════════════════════════
+function setQueueFilter(filter, btn) {
+  currentQueueFilter = filter;
+  document.querySelectorAll('.admin-filter-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  renderQueue();
+}
+
+function renderQueue() {
+  const allSubs = DB.getSubmissions();
+  const list = currentQueueFilter === 'pending' ? allSubs.filter(s => s.status === 'pending') : allSubs;
+  const container = document.getElementById('queue-list');
+
+  if (list.length === 0) {
+    container.innerHTML = `<div class="admin-empty"><div class="admin-empty-icon">✅</div><h3>${currentQueueFilter === 'pending' ? 'Queue is empty' : 'No submissions yet'}</h3><p>${currentQueueFilter === 'pending' ? 'All caught up — nothing pending review' : 'Investor submissions will appear here'}</p></div>`;
+    return;
+  }
+
+  container.innerHTML = list.map((s, i) => renderQueueCard(s, i)).join('');
+}
+
+function renderQueueCard(s, idx) {
+  const allUsers = DB.getUsers();
+  const submitter = allUsers.find(u => u.id === s.userId);
+  const date = formatDate(s.submittedAt);
+  const statusMap = { pending:'asb-pending', live:'asb-live', rejected:'asb-rejected', flagged:'asb-flagged' };
+  const statusLabel = { pending:'⏳ Pending', live:'● Live', rejected:'✗ Rejected', flagged:'⚑ Flagged' };
+
+  return `
+  <div class="review-queue-card" style="animation-delay:${idx * 0.04}s" id="rqc-${s.id}">
+    <div class="rqc-header">
+      <div class="rqc-left">
+        <div class="rqc-name">${s.name}</div>
+        <div class="rqc-org">${s.org}</div>
+      </div>
+      <div class="rqc-right">
+        <span class="admin-status-badge ${statusMap[s.status] || 'asb-pending'}">${statusLabel[s.status] || '⏳ Pending'}</span>
+        ${s.status === 'pending' ? `
+          <button class="action-btn action-btn-approve" onclick="approveSubmission('${s.id}')">✓ Approve</button>
+          <button class="action-btn action-btn-flag" onclick="flagSubmission('${s.id}')">⚑ Flag</button>
+          <button class="action-btn action-btn-reject" onclick="openRejectModal('${s.id}')">✗ Reject</button>
+        ` : ''}
+        ${s.status === 'live' ? `<button class="action-btn action-btn-reject" onclick="revokeSubmission('${s.id}')">↩ Revoke</button>` : ''}
+        ${s.status === 'flagged' ? `
+          <button class="action-btn action-btn-approve" onclick="approveSubmission('${s.id}')">✓ Approve anyway</button>
+          <button class="action-btn action-btn-reject" onclick="openRejectModal('${s.id}')">✗ Reject</button>
+        ` : ''}
+      </div>
+    </div>
+
+    <div class="rqc-meta">
+      <span class="rqc-meta-item">💰 <strong>${s.amount}</strong></span>
+      <span class="rqc-meta-item">📅 <strong>${s.deadline}</strong></span>
+      <span class="rqc-meta-item">🌍 <strong>${s.geo}</strong></span>
+      <span class="rqc-meta-item">🏷 <strong>${s.type}</strong></span>
+      <span class="rqc-meta-item">📊 Stages: <strong>${(s.stage || []).join(', ') || 'Not specified'}</strong></span>
+    </div>
+
+    <div class="rqc-desc">${s.desc}</div>
+
+    ${(s.eligibility || []).length > 0 ? `
+    <div class="rqc-eligibility">
+      ${s.eligibility.map(e => `<span class="rqc-elig-chip ${e.ok ? 'ok' : 'no'}">${e.ok ? '✓' : '✗'} ${e.text}</span>`).join('')}
+    </div>` : ''}
+
+    ${s.url ? `<div style="margin-bottom:10px"><a href="${s.url}" target="_blank" style="font-size:12px;color:rgba(30,79,168,0.8);text-decoration:none">🔗 ${s.url}</a></div>` : ''}
+
+    <div class="rqc-submitter">
+      <span>Submitted by <strong style="color:rgba(255,255,255,0.5)">${submitter ? submitter.name : 'Unknown'}</strong> (${submitter ? submitter.email : s.userId})</span>
+      <span>·</span>
+      <span>${date}</span>
+      ${s.rejectReason ? `<span>·</span><span style="color:#f87171">Rejection reason: ${s.rejectReason}</span>` : ''}
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════
+// ADMIN — ACTIONS
+// ═══════════════════════════════════════════
+function approveSubmission(id) {
+  const subs = DB.getSubmissions();
+  const sub = subs.find(s => s.id === id);
+  if (!sub) return;
+  sub.status = 'live';
+  sub.approvedAt = new Date().toISOString();
+  DB.saveSubmissions(subs);
+  logActivity('✅', `Approved: <strong>${sub.name}</strong> by ${sub.org} — now live in directory`, 'green');
+  showToast(`✓ "${sub.name}" is now live in the directory`, 'success');
+  refreshAdminAfterAction();
+}
+
+function revokeSubmission(id) {
+  const subs = DB.getSubmissions();
+  const sub = subs.find(s => s.id === id);
+  if (!sub) return;
+  sub.status = 'pending';
+  delete sub.approvedAt;
+  DB.saveSubmissions(subs);
+  logActivity('↩', `Revoked live listing: <strong>${sub.name}</strong> — returned to pending`, 'gold');
+  showToast(`"${sub.name}" revoked — moved back to pending`);
+  refreshAdminAfterAction();
+}
+
+function flagSubmission(id) {
+  const subs = DB.getSubmissions();
+  const sub = subs.find(s => s.id === id);
+  if (!sub) return;
+  sub.status = 'flagged';
+  DB.saveSubmissions(subs);
+  logActivity('⚑', `Flagged for review: <strong>${sub.name}</strong> by ${sub.org}`, 'gold');
+  showToast(`"${sub.name}" flagged for further review`);
+  refreshAdminAfterAction();
+}
+
+function openRejectModal(id) {
+  rejectTargetId = id;
+  selectedRejectReason = null;
+  document.querySelectorAll('.reject-reason-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('rejectCustomNote').value = '';
+  openModal('rejectModal');
+}
+
+function selectRejectReason(btn) {
+  document.querySelectorAll('.reject-reason-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedRejectReason = btn.textContent.trim();
+}
+
+function confirmReject() {
+  if (!rejectTargetId) return;
+  const reason = selectedRejectReason || document.getElementById('rejectCustomNote').value.trim() || 'No reason provided';
+  const subs = DB.getSubmissions();
+  const sub = subs.find(s => s.id === rejectTargetId);
+  if (!sub) return;
+  sub.status = 'rejected';
+  sub.rejectReason = reason;
+  sub.rejectedAt = new Date().toISOString();
+  DB.saveSubmissions(subs);
+  logActivity('✗', `Rejected: <strong>${sub.name}</strong> — "${reason.substring(0,50)}..."`, 'red');
+  closeModal('rejectModal');
+  showToast(`"${sub.name}" rejected`, 'error');
+  rejectTargetId = null;
+  refreshAdminAfterAction();
+}
+
+function deleteUser(userId) {
+  if (!confirm('Are you sure you want to delete this user? This cannot be undone.')) return;
+  const users = DB.getUsers().filter(u => u.id !== userId);
+  DB.saveUsers(users);
+  // Also remove their submissions
+  const subs = DB.getSubmissions().filter(s => s.userId !== userId);
+  DB.saveSubmissions(subs);
+  logActivity('🗑', `Deleted user account and all associated submissions`, 'red');
+  showToast('User deleted');
+  renderUsersTable();
+}
+
+function promoteToAdmin(userId) {
+  const users = DB.getUsers();
+  const user = users.find(u => u.id === userId);
+  if (!user) return;
+  user.type = 'admin';
+  DB.saveUsers(users);
+  logActivity('⬆', `Promoted <strong>${user.name}</strong> to admin`, 'blue');
+  showToast(`${user.name} promoted to admin`);
+  renderUsersTable();
+}
+
+function refreshAdminAfterAction() {
+  const activePanel = document.querySelector('.admin-panel.active');
+  if (!activePanel) return;
+  const id = activePanel.id.replace('apanel-', '');
+  if (id === 'overview') renderAdminDashboard();
+  else if (id === 'queue') { renderQueue(); renderAdminDashboard(); }
+  else if (id === 'live') renderLiveListings();
+  else if (id === 'flagged') renderFlaggedListings();
+  else if (id === 'rejected') renderRejectedListings();
+  // Always update badges
+  const subs = DB.getSubmissions();
+  document.getElementById('admin-queue-badge').textContent = subs.filter(s => s.status === 'pending').length;
+  document.getElementById('admin-live-badge').textContent = subs.filter(s => s.status === 'live').length;
+  document.getElementById('admin-flag-badge').textContent = subs.filter(s => s.status === 'flagged').length;
+}
+
+// ═══════════════════════════════════════════
+// ADMIN — LISTINGS PANELS
+// ═══════════════════════════════════════════
+function renderLiveListings(search = '') {
+  const subs = DB.getSubmissions().filter(s => s.status === 'live');
+  const filtered = search ? subs.filter(s => s.name.toLowerCase().includes(search.toLowerCase()) || s.org.toLowerCase().includes(search.toLowerCase())) : subs;
+  const container = document.getElementById('live-list');
+
+  if (filtered.length === 0) {
+    container.innerHTML = `<div class="admin-empty"><div class="admin-empty-icon">🟢</div><h3>No live listings yet</h3><p>Approve submissions to make them visible to founders</p></div>`;
+    return;
+  }
+  container.innerHTML = filtered.map((s, i) => `
+    <div class="review-queue-card" style="animation-delay:${i*0.04}s">
+      <div class="rqc-header">
+        <div class="rqc-left"><div class="rqc-name">${s.name}</div><div class="rqc-org">${s.org}</div></div>
+        <div class="rqc-right">
+          <span class="admin-status-badge asb-live">● Live</span>
+          <button class="action-btn action-btn-flag" onclick="flagSubmission('${s.id}')">⚑ Flag</button>
+          <button class="action-btn action-btn-reject" onclick="revokeSubmission('${s.id}')">↩ Revoke</button>
+        </div>
+      </div>
+      <div class="rqc-meta">
+        <span class="rqc-meta-item">💰 <strong>${s.amount}</strong></span>
+        <span class="rqc-meta-item">📅 <strong>${s.deadline}</strong></span>
+        <span class="rqc-meta-item">🌍 <strong>${s.geo}</strong></span>
+        <span class="rqc-meta-item">👁 <strong>${s.views || 0}</strong> views</span>
+        <span class="rqc-meta-item">✅ Approved ${formatDate(s.approvedAt)}</span>
+      </div>
+      <div class="rqc-desc">${s.desc}</div>
+    </div>`).join('');
+}
+
+function renderFlaggedListings() {
+  const subs = DB.getSubmissions().filter(s => s.status === 'flagged');
+  const container = document.getElementById('flagged-list');
+  if (subs.length === 0) {
+    container.innerHTML = `<div class="admin-empty"><div class="admin-empty-icon">⚑</div><h3>Nothing flagged</h3><p>Flagged listings from founders or your team will appear here</p></div>`;
+    return;
+  }
+  container.innerHTML = subs.map((s, i) => renderQueueCard(s, i)).join('');
+}
+
+function renderRejectedListings() {
+  const subs = DB.getSubmissions().filter(s => s.status === 'rejected');
+  const container = document.getElementById('rejected-list');
+  if (subs.length === 0) {
+    container.innerHTML = `<div class="admin-empty"><div class="admin-empty-icon">✗</div><h3>No rejections</h3><p>Rejected submissions will be archived here</p></div>`;
+    return;
+  }
+  container.innerHTML = subs.map((s, i) => renderQueueCard(s, i)).join('');
+}
+
+// ═══════════════════════════════════════════
+// ADMIN — USERS TABLE
+// ═══════════════════════════════════════════
+function renderUsersTable(search = '') {
+  const allUsers = DB.getUsers();
+  const allSubs = DB.getSubmissions();
+  const filtered = search ? allUsers.filter(u => u.name.toLowerCase().includes(search.toLowerCase()) || u.email.toLowerCase().includes(search.toLowerCase())) : allUsers;
+  const tbody = document.getElementById('users-tbody');
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:rgba(255,255,255,0.2);padding:36px">No users found</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(u => {
+    const subCount = allSubs.filter(s => s.userId === u.id).length;
+    return `
+    <tr>
+      <td class="td-name">${u.name}</td>
+      <td>${u.email}</td>
+      <td><span class="td-type-badge td-type-${u.type}">${u.type === 'founder' ? '🚀' : u.type === 'investor' ? '🏦' : '⚡'} ${u.type}</span></td>
+      <td>${subCount > 0 ? `<span style="color:#fff;font-weight:600">${subCount}</span>` : '<span style="color:rgba(255,255,255,0.2)">—</span>'}</td>
+      <td>${formatDate(u.createdAt)}</td>
+      <td>
+        <div style="display:flex;gap:6px">
+          ${u.type !== 'admin' ? `<button class="action-btn action-btn-flag" style="font-size:11px;padding:5px 9px" onclick="promoteToAdmin('${u.id}')">→ Admin</button>` : '<span style="font-size:11px;color:rgba(255,255,255,0.25)">Super admin</span>'}
+          <button class="action-btn action-btn-reject" style="font-size:11px;padding:5px 9px" onclick="deleteUser('${u.id}')">Delete</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════
+// ADMIN — ACTIVITY LOG
+// ═══════════════════════════════════════════
+function renderActivityFeed() {
+  const feed = document.getElementById('activity-feed');
+  if (activityLog.length === 0) {
+    feed.innerHTML = `<div class="admin-empty"><div class="admin-empty-icon">⚡</div><h3>No activity yet</h3><p>Moderation actions will be logged here in real time</p></div>`;
+    return;
+  }
+  feed.innerHTML = activityLog.map(a => renderActivityItem(a)).join('');
+}
+
+function renderActivityItem(a) {
+  const colorMap = { green: 'ad-green', red: 'ad-red', gold: 'ad-gold', blue: 'ad-blue' };
+  const time = a.time ? new Date(a.time).toLocaleString('en-GB', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' }) : 'recently';
+  return `
+    <div class="activity-item">
+      <div class="activity-dot ${colorMap[a.type] || 'ad-blue'}">${a.icon}</div>
+      <div class="activity-content">
+        <div class="activity-text">${a.text}</div>
+        <div class="activity-time">${time}</div>
+      </div>
+    </div>`;
+}
+
+function clearActivityLog() {
+  if (!confirm('Clear the entire activity log?')) return;
+  activityLog = [];
+  localStorage.setItem('fundmap_activity', '[]');
+  renderActivityFeed();
+}
+
+// ═══════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════
+function formatDate(iso) {
+  if (!iso) return '—';
+  try {
+    return new Date(iso).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+  } catch(e) { return iso; }
+}
 document.addEventListener('DOMContentLoaded', () => {
   // Restore session
   const user = DB.getCurrentUser();
@@ -1709,6 +2852,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // Init eligibility builder
   addEligRow(true);
   addEligRow(false);
+
+  // Restore activity log
+  activityLog = JSON.parse(localStorage.getItem('fundmap_activity') || '[]');
 });
 </script>
 </body>
