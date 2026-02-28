@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#000000">
+<meta name="description" content="FundMap — Find, verify, and apply for startup funding. 2,400+ verified grants, accelerators, angels and VCs.">
 <title>FundMap — Find. Verify. Apply.</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <style>
@@ -45,7 +49,74 @@ body::after {
 }
 
 .view { display: none; min-height: 100vh; }
-.view.active { display: block; }
+.view.active { display: block; animation: viewEnter 0.35s cubic-bezier(0.4,0,0.2,1) both; }
+@keyframes viewEnter { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+
+/* ── SKELETON LOADERS ── */
+@keyframes shimmer {
+  0%   { background-position: -700px 0; }
+  100% { background-position:  700px 0; }
+}
+.skeleton-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px 22px;
+  margin-bottom: 12px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.skeleton-block {
+  background: linear-gradient(90deg, var(--bg2) 25%, rgba(200,195,188,0.4) 50%, var(--bg2) 75%);
+  background-size: 700px 100%;
+  animation: shimmer 1.5s infinite linear;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+/* ── CARD MICRO-INTERACTIONS ── */
+.opp-card {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s cubic-bezier(0.34,1.56,0.64,1) !important;
+}
+.opp-card:hover { transform: translateY(-3px) scale(1.005) !important; }
+.opp-card:active { transform: translateY(-1px) scale(1.002) !important; transition-duration: 0.08s !important; }
+
+/* ── BUTTON MICRO-INTERACTIONS ── */
+.btn { transition: transform 0.12s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.15s, background 0.15s, border-color 0.15s !important; }
+.btn:hover  { transform: translateY(-1px); }
+.btn:active { transform: translateY(0) scale(0.98); }
+
+/* ── MODAL ENTRANCE ── */
+.modal-box {
+  animation: modalIn 0.28s cubic-bezier(0.34,1.2,0.64,1) both;
+}
+@keyframes modalIn {
+  from { opacity:0; transform: scale(0.94) translateY(16px); }
+  to   { opacity:1; transform: scale(1)    translateY(0); }
+}
+.modal-overlay.open {
+  animation: fadeOverlay 0.2s ease both;
+}
+@keyframes fadeOverlay {
+  from { opacity:0; backdrop-filter:blur(0px); }
+  to   { opacity:1; backdrop-filter:blur(6px); }
+}
+
+/* ── TOAST TRANSITION ── */
+@keyframes toastIn  { from { opacity:0; transform:translateX(24px); } to { opacity:1; transform:translateX(0); } }
+@keyframes toastOut { from { opacity:1; transform:translateX(0); }    to { opacity:0; transform:translateX(24px); } }
+
+/* ── NAV LINK ACTIVE INDICATOR ── */
+.nav-link { position: relative; }
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 50%; transform: translateX(-50%);
+  width: 16px; height: 2px;
+  background: #33B50C;
+  border-radius: 2px;
+}
 
 /* ── NAVIGATION ── */
 .nav {
@@ -64,6 +135,43 @@ body::after {
 .nav-link:hover { background: rgba(255,255,255,0.1); color: #fff; }
 .nav-link.active { background: rgba(255,255,255,0.15); color: #fff; }
 .nav-link.hidden { display: none; }
+/* Critical fix: hidden must override user-menu's display:flex */
+.user-menu.hidden { display: none !important; }
+
+/* ── PAGE TRANSITIONS ── */
+.view {
+  display: none;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.32s cubic-bezier(0.4,0,0.2,1), transform 0.32s cubic-bezier(0.4,0,0.2,1);
+}
+.view.active {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+.view.transitioning-out {
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
+}
+/* Skeleton shimmer for loading states */
+@keyframes shimmer {
+  0% { background-position: -600px 0; }
+  100% { background-position: 600px 0; }
+}
+.skeleton {
+  border-radius: 8px;
+  background: linear-gradient(90deg, var(--bg2) 25%, var(--border) 50%, var(--bg2) 75%);
+  background-size: 600px 100%;
+  animation: shimmer 1.4s infinite;
+}
+/* Nav transition */
+.nav-link { transition: background 0.15s, color 0.15s, opacity 0.2s; }
+.nav-link.hidden { display: none; }
+/* User menu fade in/out */
+.user-menu { transition: opacity 0.2s; }
+.user-menu.hidden { display: none !important; opacity: 0; }
 
 /* Auth button in nav */
 .nav-auth-btn {
@@ -84,67 +192,104 @@ body::after {
   color: #33B50C;
   background: rgba(51,181,12,0.06);
 }
+.nav-auth-btn.hidden { display: none !important; }
 
-/* User menu */
+/* User menu — redesigned */
 .user-menu { position: relative; display: flex; align-items: center; }
 .user-avatar {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 5px 12px 5px 6px;
-  border-radius: 6px;
-  border: 1.5px solid rgba(255,255,255,0.12);
-  background: rgba(255,255,255,0.05);
+  padding: 5px 10px 5px 5px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.06);
   cursor: pointer;
   transition: all 0.15s;
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 13px;
-  font-weight: 600;
-  color: #fff;
+  font-weight: 500;
+  color: rgba(255,255,255,0.85);
   height: 36px;
 }
-.user-avatar:hover { border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.09); }
+.user-avatar:hover { border-color: rgba(255,255,255,0.28); background: rgba(255,255,255,0.1); color: #fff; }
 .user-avatar-initials {
-  width: 26px; height: 26px; border-radius: 4px;
-  background: #33B50C;
+  width: 26px; height: 26px; border-radius: 6px;
+  background: linear-gradient(135deg, #33B50C, #28920A);
   color: #fff;
   font-size: 11px; font-weight: 700;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
+  letter-spacing: 0.02em;
 }
-.user-avatar.investor .user-avatar-initials { background: var(--accent3); }
-.user-avatar-chevron { font-size: 9px; opacity: 0.4; margin-left: 2px; }
+.user-avatar.investor .user-avatar-initials { background: linear-gradient(135deg, #1E4FA8, #163a80); }
+.user-avatar-name { max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.user-avatar-chevron { font-size: 9px; opacity: 0.4; margin-left: 2px; transition: transform 0.15s; }
+.user-menu.open .user-avatar-chevron { transform: rotate(180deg); }
 
 .user-dropdown {
-  position: absolute; right: 0; top: calc(100% + 8px);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  box-shadow: var(--shadow-lg);
-  width: 220px;
-  overflow: hidden;
   display: none;
-  z-index: 200;
-  animation: dropDown 0.15s ease both;
+  position: absolute; top: calc(100% + 8px); right: 0;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 12px 48px rgba(28,24,20,0.18), 0 2px 8px rgba(28,24,20,0.06);
+  min-width: 240px;
+  z-index: 500;
+  overflow: hidden;
+  animation: dropIn 0.15s ease;
 }
+@keyframes dropIn { from { opacity:0; transform:translateY(-6px) scale(0.98); } to { opacity:1; transform:translateY(0) scale(1); } }
 .user-dropdown.open { display: block; }
 
-@keyframes dropDown {
-  from { opacity: 0; transform: translateY(-6px); }
-  to { opacity: 1; transform: translateY(0); }
+.dropdown-header {
+  padding: 16px 18px 14px;
+  background: linear-gradient(135deg, #f8f6f2, #f0ece4);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
+.dropdown-avatar-large {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: linear-gradient(135deg, #33B50C, #28920A);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 15px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.dropdown-avatar-large.investor { background: linear-gradient(135deg, #1E4FA8, #163a80); }
+.dropdown-header-text { flex: 1; min-width: 0; }
+.dropdown-name { font-family: var(--font-display); font-weight: 700; font-size: 14px; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dropdown-email { font-size: 11px; color: var(--muted); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dropdown-type {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.04em;
+  padding: 2px 7px; border-radius: 4px; margin-top: 5px;
+}
+.dropdown-type.founder { background: rgba(51,181,12,0.1); color: #1e7a00; }
+.dropdown-type.investor { background: rgba(30,79,168,0.1); color: #1E4FA8; }
+.dropdown-type.admin { background: rgba(200,75,49,0.1); color: #c84b31; }
 
-.dropdown-header { padding: 16px; border-bottom: 1px solid var(--border); background: var(--surface2); }
-.dropdown-name { font-family: var(--font-display); font-weight: 700; font-size: 14px; color: var(--ink); }
-.dropdown-email { font-size: 11px; color: var(--muted); margin-top: 2px; }
-.dropdown-type { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 4px; margin-top: 6px; }
-.dropdown-type.founder { background: rgba(42,107,74,0.12); color: var(--accent2); }
-.dropdown-type.investor { background: rgba(30,79,168,0.12); color: var(--accent3); }
-
-.dropdown-item { display: flex; align-items: center; gap: 10px; padding: 11px 16px; font-size: 13px; color: var(--ink2); cursor: pointer; transition: background 0.1s; border: none; background: none; width: 100%; text-align: left; }
-.dropdown-item:hover { background: var(--bg2); }
-.dropdown-item.danger { color: var(--accent); }
-.dropdown-divider { height: 1px; background: var(--border); }
+.dropdown-section { padding: 8px 8px; border-bottom: 1px solid var(--border); }
+.dropdown-section:last-child { border-bottom: none; }
+.dropdown-item {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%; text-align: left;
+  padding: 9px 12px; border-radius: 8px;
+  font-family: var(--font-body); font-size: 13px;
+  color: var(--ink2); cursor: pointer;
+  border: none; background: none;
+  transition: background 0.1s, color 0.1s;
+}
+.dropdown-item:hover { background: var(--bg2); color: var(--ink); }
+.dropdown-item .di-icon { font-size: 15px; width: 20px; text-align: center; flex-shrink: 0; }
+.dropdown-item .di-label { flex: 1; font-weight: 500; }
+.dropdown-item .di-badge { font-size: 10px; background: var(--accent); color: #fff; padding: 1px 6px; border-radius: 4px; font-weight: 700; }
+.dropdown-item.danger { color: #c84b31; }
+.dropdown-item.danger:hover { background: rgba(200,75,49,0.06); color: #a83d28; }
+.dropdown-divider { display: none; }
 
 /* ── CONTAINERS ── */
 .container { max-width: 1100px; margin: 0 auto; padding: 0 40px; }
@@ -183,8 +328,8 @@ body::after {
    AUTH MODAL
 ═══════════════════════════════════ */
 .modal-overlay {
-  position: fixed; inset: 0; z-index: 500;
-  background: rgba(28,24,20,0.6);
+  position: fixed; inset: 0; z-index: 9000;
+  background: rgba(28,24,20,0.7);
   backdrop-filter: blur(6px);
   display: flex; align-items: center; justify-content: center;
   opacity: 0; pointer-events: none;
@@ -262,12 +407,133 @@ body::after {
 
 .google-btn {
   width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
-  padding: 11px; border: 1.5px solid var(--border); border-radius: 8px;
-  font-family: var(--font-body); font-size: 14px; font-weight: 500; color: var(--ink);
-  background: var(--surface); cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
+  padding: 12px 16px; border: 1.5px solid #dadce0; border-radius: 10px;
+  font-family: 'Google Sans', var(--font-body); font-size: 14px; font-weight: 500; color: #3c4043;
+  background: #fff; cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  position: relative; overflow: hidden;
 }
-.google-btn:hover { background: var(--bg2); border-color: var(--ink2); }
+.google-btn::before {
+  content: ''; position: absolute; inset: 0;
+  background: rgba(66,133,244,0.04);
+  opacity: 0; transition: opacity 0.15s;
+}
+.google-btn:hover { border-color: #4285f4; box-shadow: 0 2px 8px rgba(66,133,244,0.18); }
+.google-btn:hover::before { opacity: 1; }
+.google-btn:active { box-shadow: 0 1px 2px rgba(0,0,0,0.1); transform: scale(0.99); }
+.google-btn .google-btn-text { font-weight: 600; letter-spacing: 0.01em; }
+
+/* Google account picker modal */
+.google-picker-overlay {
+  position: fixed; inset: 0; z-index: 9500;
+  background: rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(4px);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.2s;
+}
+.google-picker-overlay.open { opacity: 1; pointer-events: all; }
+.google-picker {
+  background: #fff; border-radius: 16px;
+  width: 100%; max-width: 400px; margin: 20px;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.3);
+  overflow: hidden;
+  transform: scale(0.94) translateY(16px);
+  transition: transform 0.3s cubic-bezier(0.34,1.2,0.64,1);
+}
+.google-picker-overlay.open .google-picker { transform: scale(1) translateY(0); }
+
+.google-picker-header {
+  padding: 24px 24px 16px;
+  border-bottom: 1px solid #f1f3f4;
+  text-align: center;
+}
+.google-picker-logo {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  margin-bottom: 12px;
+}
+.google-picker-logo svg { width: 22px; height: 22px; }
+.google-picker-logo span { font-size: 18px; font-weight: 700; color: #3c4043; letter-spacing: -0.01em; }
+.google-picker-title { font-size: 20px; font-weight: 700; color: #202124; margin-bottom: 4px; font-family: 'Google Sans', sans-serif; }
+.google-picker-sub { font-size: 13px; color: #5f6368; line-height: 1.4; }
+
+.google-picker-accounts { padding: 8px 0; }
+.google-account-row {
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px 24px; cursor: pointer;
+  transition: background 0.12s;
+  -webkit-tap-highlight-color: transparent;
+}
+.google-account-row:hover { background: #f8f9fa; }
+.google-account-row:active { background: #f1f3f4; }
+.google-account-avatar {
+  width: 42px; height: 42px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 700; color: #fff;
+  flex-shrink: 0; position: relative;
+}
+.google-account-avatar .avatar-img {
+  width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
+}
+.google-account-info { flex: 1; min-width: 0; }
+.google-account-name { font-size: 14px; font-weight: 600; color: #202124; font-family: 'Google Sans', sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.google-account-email { font-size: 12px; color: #5f6368; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.google-account-check { color: #1a73e8; font-size: 16px; }
+
+.google-picker-divider { height: 1px; background: #f1f3f4; margin: 4px 0; }
+.google-picker-add-row {
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px 24px; cursor: pointer;
+  transition: background 0.12s; color: #1a73e8;
+  -webkit-tap-highlight-color: transparent;
+}
+.google-picker-add-row:hover { background: #f8f9fa; }
+.google-picker-add-icon {
+  width: 42px; height: 42px; border-radius: 50%;
+  border: 1.5px solid #dadce0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; color: #5f6368; flex-shrink: 0;
+}
+.google-picker-add-text { font-size: 14px; font-weight: 500; color: #1a73e8; font-family: 'Google Sans', sans-serif; }
+
+.google-picker-footer {
+  padding: 12px 24px 16px;
+  border-top: 1px solid #f1f3f4;
+  display: flex; justify-content: flex-end; gap: 8px;
+}
+.google-picker-cancel {
+  padding: 8px 20px; border-radius: 6px;
+  border: none; background: none; cursor: pointer;
+  font-size: 13px; font-weight: 600; color: #1a73e8;
+  font-family: 'Google Sans', sans-serif;
+  transition: background 0.12s;
+}
+.google-picker-cancel:hover { background: rgba(26,115,232,0.06); }
+
+/* Connected badge in profile */
+.google-connected-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9;
+  border-radius: 20px; padding: 4px 12px;
+  font-size: 12px; font-weight: 600; font-family: var(--font-body);
+}
+.google-connect-prompt {
+  display: flex; align-items: center; justify-content: space-between;
+  background: #f8f9ff; border: 1px solid #e3e8f8;
+  border-radius: 10px; padding: 14px 16px; margin-top: 16px;
+  gap: 12px; flex-wrap: wrap;
+}
+.google-connect-left { display: flex; align-items: center; gap: 10px; }
+.google-connect-info strong { font-size: 13px; color: var(--ink); display: block; }
+.google-connect-info span { font-size: 12px; color: var(--muted); }
+
+/* Loading state on Google button */
+.google-btn.loading { opacity: 0.7; pointer-events: none; }
+.google-btn.loading .google-btn-text::after {
+  content: '…'; animation: ellipsis 1.2s infinite;
+}
+@keyframes ellipsis { 0%,100% { content: '…'; } 33% { content: '.'; } 66% { content: '..'; } }
 
 .auth-switch { text-align: center; margin-top: 20px; font-size: 13px; color: var(--muted); }
 .auth-switch a { color: var(--accent); font-weight: 600; cursor: pointer; text-decoration: none; }
@@ -461,6 +727,12 @@ body::after {
 .opp-footer { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; align-items: center; }
 .match-pill { display: inline-flex; align-items: center; gap: 4px; font-family: var(--font-display); font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 4px; background: rgba(42,107,74,0.1); color: var(--accent2); letter-spacing: 0.04em; }
 .community-pill { display: inline-flex; align-items: center; gap: 4px; font-family: var(--font-display); font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 4px; background: rgba(30,79,168,0.08); color: var(--accent3); }
+.opp-type-chip { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 5px; letter-spacing: 0.02em; }
+.chip-accelerator { background: rgba(30,79,168,0.08); color: #1E4FA8; border: 1px solid rgba(30,79,168,0.15); }
+.chip-government { background: rgba(184,134,11,0.08); color: #8a6400; border: 1px solid rgba(184,134,11,0.15); }
+.chip-vc { background: rgba(51,181,12,0.07); color: #1e7a00; border: 1px solid rgba(51,181,12,0.15); }
+.chip-foundation { background: rgba(139,90,147,0.08); color: #7b4f83; border: 1px solid rgba(139,90,147,0.15); }
+.chip-angel { background: rgba(200,140,50,0.08); color: #8a5c00; border: 1px solid rgba(200,140,50,0.15); }
 
 /* ═══════════════════════════════════
    DETAIL
@@ -588,10 +860,10 @@ body::after {
 .tips-list li::before { content: '→'; color: var(--accent3); font-weight: 700; flex-shrink: 0; }
 
 /* ── TOAST ── */
-.toast { position: fixed; bottom: 24px; right: 24px; background: var(--ink); color: #fff; padding: 16px 24px; border-radius: 8px; box-shadow: var(--shadow-lg); z-index: 1000; transform: translateY(100px); opacity: 0; transition: all 0.3s ease; font-size: 14px; }
-.toast.show { transform: translateY(0); opacity: 1; }
-.toast.success { background: var(--accent2); }
-.toast.error { background: var(--accent); }
+.toast { position: fixed; bottom: 24px; right: 24px; background: var(--ink); color: #fff; padding: 14px 22px; border-radius: 10px; box-shadow: 0 8px 32px rgba(0,0,0,0.28); z-index: 9999; transform: translateX(120px); opacity: 0; transition: transform 0.3s cubic-bezier(0.34,1.2,0.64,1), opacity 0.25s ease; font-size: 14px; max-width: 320px; line-height: 1.4; border-left: 3px solid rgba(255,255,255,0.2); }
+.toast.show { transform: translateX(0); opacity: 1; }
+.toast.success { background: #1a5c0a; border-left-color: #33B50C; }
+.toast.error   { background: #7a1a0a; border-left-color: #e05533; }
 
 /* ── FOOTER ── */
 .footer-nav { background: var(--ink); padding: 32px 40px; display: flex; justify-content: space-between; align-items: center; margin-top: 60px; }
@@ -606,25 +878,493 @@ body::after {
 .empty-state-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
 .empty-state h3 { font-family: var(--font-display); font-size: 18px; color: var(--ink); margin-bottom: 8px; }
 
-@media (max-width: 800px) {
-  .nav { padding: 0 16px; }
-  .container, .container-sm { padding: 0 16px; }
+/* ═══════════════════════════════════════════
+   ONBOARDING FLOW
+═══════════════════════════════════════════ */
+.onboarding-overlay {
+  position: fixed; inset: 0; z-index: 8000;
+  background: rgba(10,10,10,0.82);
+  backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.onboarding-overlay.open { opacity: 1; pointer-events: all; }
+.onboarding-modal {
+  background: #fff; border-radius: 24px;
+  width: 100%; max-width: 520px; margin: 20px;
+  box-shadow: 0 32px 100px rgba(0,0,0,0.35); overflow: hidden;
+  transform: scale(0.94) translateY(20px);
+  transition: transform 0.35s cubic-bezier(0.34,1.2,0.64,1);
+}
+.onboarding-overlay.open .onboarding-modal { transform: scale(1) translateY(0); }
+.onboarding-header {
+  background: linear-gradient(135deg, #0D0D0D 0%, #1a2a12 100%);
+  padding: 32px 36px 24px; position: relative; overflow: hidden;
+}
+.onboarding-header::after {
+  content: ''; position: absolute; top: -40px; right: -40px;
+  width: 180px; height: 180px;
+  background: radial-gradient(circle, rgba(51,181,12,0.2) 0%, transparent 70%);
+}
+.onboarding-step-dots { display: flex; gap: 6px; margin-bottom: 18px; }
+.onboarding-step-dot {
+  height: 4px; border-radius: 2px;
+  background: rgba(255,255,255,0.15);
+  transition: background 0.3s, width 0.3s;
+  width: 24px;
+}
+.onboarding-step-dot.active { background: #33B50C; width: 36px; }
+.onboarding-step-dot.done  { background: rgba(51,181,12,0.4); }
+.onboarding-header h2 {
+  font-family: var(--font-display); font-size: 22px; font-weight: 800;
+  color: #fff; letter-spacing: -0.02em; margin-bottom: 6px; line-height: 1.2;
+}
+.onboarding-header p { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.5; }
+.onboarding-progress-bar {
+  height: 3px; background: var(--bg2); margin: 20px 36px 0; border-radius: 2px; overflow: hidden;
+}
+.onboarding-progress-fill {
+  height: 100%; background: #33B50C; border-radius: 2px;
+  transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+.onboarding-body { padding: 28px 36px 8px; }
+.onboarding-step { display: none; }
+.onboarding-step.active { display: block; animation: stepIn 0.28s ease both; }
+@keyframes stepIn { from { opacity:0; transform:translateX(14px); } to { opacity:1; transform:translateX(0); } }
+.onboarding-question {
+  font-family: var(--font-display); font-size: 15px; font-weight: 700;
+  color: var(--ink); margin-bottom: 14px;
+}
+.onboarding-hint { font-size: 12px; color: var(--muted); margin-bottom: 14px; margin-top: -10px; }
+.onboarding-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+.onboarding-chip {
+  padding: 8px 16px; border-radius: 100px;
+  border: 1.5px solid var(--border); background: var(--surface);
+  font-family: var(--font-body); font-size: 13px; font-weight: 500;
+  color: var(--ink2); cursor: pointer; transition: all 0.15s;
+  -webkit-tap-highlight-color: transparent; user-select: none;
+}
+.onboarding-chip:hover { border-color: #33B50C; color: #1e7a00; background: rgba(51,181,12,0.05); }
+.onboarding-chip.selected { background: #33B50C; border-color: #33B50C; color: #fff; font-weight: 600; }
+.onboarding-footer {
+  padding: 16px 36px 28px;
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+}
+.onboarding-skip {
+  font-size: 12px; color: var(--muted); cursor: pointer;
+  background: none; border: none; font-family: var(--font-body);
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.onboarding-welcome-screen { padding: 8px 0 4px; }
+.onboarding-welcome-emoji { font-size: 48px; margin-bottom: 8px; display: block; }
+.onboarding-welcome-list {
+  list-style: none; padding: 0; margin: 16px 0 0;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.onboarding-welcome-list li {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px; color: var(--ink2);
+}
+.onboarding-welcome-list .wl-icon {
+  width: 28px; height: 28px; border-radius: 7px;
+  background: var(--bg2); display: flex; align-items: center;
+  justify-content: center; font-size: 14px; flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════
+   MATCH SCORE TOOLTIP
+═══════════════════════════════════════════ */
+.match-pill-wrap { position: relative; display: inline-flex; }
+.match-tooltip {
+  position: absolute; bottom: calc(100% + 8px); left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background: #1a1a1a; color: #fff;
+  border-radius: 10px; padding: 10px 14px;
+  font-size: 12px; width: 210px;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.25);
+  pointer-events: none; opacity: 0;
+  transition: opacity 0.18s, transform 0.18s;
+  z-index: 200; white-space: normal; line-height: 1.5;
+}
+.match-tooltip::after {
+  content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+  border: 5px solid transparent; border-top-color: #1a1a1a;
+}
+.match-pill-wrap:hover .match-tooltip { opacity: 1; transform: translateX(-50%) translateY(0); }
+.match-tooltip-title {
+  font-size: 9px; font-weight: 800; letter-spacing: 0.08em;
+  text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 7px;
+}
+.match-tooltip-row {
+  display: flex; align-items: center; gap: 7px;
+  padding: 2px 0; font-size: 11px; color: rgba(255,255,255,0.8);
+}
+.mtr-icon { font-size: 12px; width: 14px; flex-shrink: 0; }
+.match-tooltip-score {
+  font-size: 18px; font-weight: 800; color: #33B50C;
+  font-family: var(--font-display); margin-bottom: 4px;
+}
+
+/* ═══════════════════════════════════════════
+   TRACKER EMPTY STATE
+═══════════════════════════════════════════ */
+.tracker-empty-state {
+  text-align: center; padding: 64px 20px; max-width: 440px; margin: 0 auto;
+}
+.tracker-empty-icon {
+  width: 72px; height: 72px; border-radius: 18px;
+  background: linear-gradient(135deg, var(--bg2), var(--border));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px; margin: 0 auto 20px;
+}
+.tracker-empty-title {
+  font-family: var(--font-display); font-size: 22px; font-weight: 800;
+  color: var(--ink); margin-bottom: 10px; letter-spacing: -0.01em;
+}
+.tracker-empty-sub { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 28px; }
+.tracker-empty-steps { display: flex; flex-direction: column; gap: 10px; text-align: left; margin-bottom: 24px; }
+.tracker-empty-step {
+  display: flex; align-items: flex-start; gap: 12px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 14px;
+}
+.tes-num {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: #33B50C; color: #fff;
+  font-family: var(--font-display); font-size: 11px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+}
+.tes-text { font-size: 13px; color: var(--ink2); line-height: 1.4; }
+.tes-text strong { color: var(--ink); display: block; margin-bottom: 2px; }
+.tracker-demo-card {
+  background: linear-gradient(135deg, #f2fce9, #e6f4df);
+  border: 1.5px dashed #33B50C; border-radius: 12px;
+  padding: 16px 16px 12px; text-align: left; margin-bottom: 8px;
+  cursor: pointer; transition: all 0.18s; position: relative;
+}
+.tracker-demo-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(51,181,12,0.15); }
+.tracker-demo-label {
+  position: absolute; top: -10px; left: 14px;
+  background: #33B50C; color: #fff; font-size: 9px; font-weight: 800;
+  letter-spacing: 0.08em; padding: 2px 8px; border-radius: 10px; text-transform: uppercase;
+}
+.tracker-demo-name { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+.tracker-demo-org { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+.tracker-demo-footer { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+/* ═══════════════════════════════════════════════════
+   RESPONSIVE — Mobile-First Breakpoints
+═══════════════════════════════════════════════════ */
+
+/* Mobile bottom tab bar */
+.mobile-tab-bar {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: #000;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  z-index: 400;
+  padding: 0 0 env(safe-area-inset-bottom);
+}
+.mobile-tab-bar-inner {
+  display: flex;
+  align-items: stretch;
+  height: 56px;
+}
+.mobile-tab-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: rgba(255,255,255,0.45);
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 500;
+  transition: color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.mobile-tab-btn .tab-icon { font-size: 20px; line-height: 1; }
+.mobile-tab-btn.active { color: #33B50C; }
+.mobile-tab-btn:active { opacity: 0.7; }
+
+/* Hamburger button */
+.nav-hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  padding: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+.nav-hamburger:active { background: rgba(255,255,255,0.1); }
+.nav-hamburger span {
+  display: block;
+  width: 22px; height: 2px;
+  background: rgba(255,255,255,0.8);
+  border-radius: 2px;
+  transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+.nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* Mobile drawer */
+.mobile-drawer {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 350;
+  pointer-events: none;
+}
+.mobile-drawer-backdrop {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.6);
+  opacity: 0;
+  transition: opacity 0.3s;
+  backdrop-filter: blur(4px);
+}
+.mobile-drawer-panel {
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: min(320px, 88vw);
+  background: #0a0a0a;
+  border-left: 1px solid rgba(255,255,255,0.08);
+  transform: translateX(100%);
+  transition: transform 0.32s cubic-bezier(0.4,0,0.2,1);
+  overflow-y: auto;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.mobile-drawer.open { pointer-events: all; }
+.mobile-drawer.open .mobile-drawer-backdrop { opacity: 1; }
+.mobile-drawer.open .mobile-drawer-panel { transform: translateX(0); }
+
+.mobile-drawer-header {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.mobile-drawer-logo { font-family: var(--font-display); font-size: 18px; font-weight: 800; color: #fff; }
+.mobile-drawer-logo span { color: #33B50C; }
+.mobile-drawer-close {
+  width: 32px; height: 32px; border-radius: 6px;
+  background: rgba(255,255,255,0.06);
+  border: none; color: rgba(255,255,255,0.6);
+  cursor: pointer; font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+}
+.mobile-drawer-user {
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  display: flex; align-items: center; gap: 12px;
+}
+.mobile-drawer-avatar {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: linear-gradient(135deg, #33B50C, #28920A);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-weight: 800; font-size: 14px; color: #fff;
+  flex-shrink: 0;
+}
+.mobile-drawer-user-name { font-size: 14px; font-weight: 600; color: #fff; }
+.mobile-drawer-user-type { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+
+.drawer-nav-section { padding: 12px 12px 4px; }
+.drawer-nav-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: rgba(255,255,255,0.2);
+  padding: 0 8px; margin-bottom: 6px;
+}
+.drawer-nav-item {
+  display: flex; align-items: center; gap: 12px;
+  width: 100%; padding: 12px 12px;
+  border-radius: 8px;
+  background: none; border: none;
+  color: rgba(255,255,255,0.7); font-family: var(--font-body);
+  font-size: 14px; font-weight: 500;
+  cursor: pointer; text-align: left;
+  transition: background 0.1s, color 0.1s;
+  -webkit-tap-highlight-color: transparent;
+}
+.drawer-nav-item:hover, .drawer-nav-item:active { background: rgba(255,255,255,0.06); color: #fff; }
+.drawer-nav-item .dni-icon { font-size: 18px; width: 24px; text-align: center; }
+.drawer-nav-item.danger { color: rgba(220,80,60,0.8); }
+.drawer-nav-item.danger:hover { background: rgba(220,80,60,0.08); color: #e05533; }
+
+/* ── TABLET: 800px ── */
+@media (max-width: 900px) {
+  .nav { padding: 0 20px; }
+  .container, .container-sm { padding: 0 20px; }
+  .nav-links { display: none; }
+  .nav-hamburger { display: flex; }
+  .mobile-drawer { display: block; }
+
+  /* Hero */
+  .hero { padding: 72px 0 56px; }
+  .hero-title { font-size: clamp(38px, 8vw, 56px); }
   .hero-visual { display: none; }
+  .hero-trust { gap: 16px; flex-wrap: wrap; }
+  .trust-divider { display: none; }
+
+  /* How it works */
   .steps-grid { grid-template-columns: 1fr 1fr; }
+
+  /* Landing sections */
   .pain-grid { grid-template-columns: 1fr; }
+  .traction-metrics { grid-template-columns: 1fr 1fr; }
+
+  /* Directory */
   .dir-body { flex-direction: column; }
-  .filters-panel { width: 100%; position: static; }
+  .filters-panel { width: 100%; position: static; border-right: none; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
+  .filters-scroll { display: flex; flex-wrap: wrap; flex-direction: row; gap: 16px; }
+  .filter-group { min-width: 140px; flex: 1; }
+
+  /* Detail */
   .trust-grid { grid-template-columns: 1fr 1fr; }
+  .detail-header-inner { padding: 0 20px 28px; }
+  .detail-title { font-size: 28px; }
+  .detail-body { padding: 20px; gap: 20px; }
+  .apply-box { position: static; margin-top: 20px; }
+
+  /* Tracker */
+  .kanban { grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  /* Profile */
   .profile-grid { grid-template-columns: 1fr; }
-  .kanban { grid-template-columns: 1fr 1fr; }
-  .detail-body { padding: 20px; }
-  .detail-header-inner { padding: 0 20px 32px; }
-  .hero-title { font-size: 44px; }
-  .traction-metrics { grid-template-columns: 1fr; }
-  .inv-stats { flex-direction: column; }
+
+  /* Investor */
+  .inv-stats { flex-wrap: wrap; gap: 12px; }
+  .inv-stat { min-width: 140px; }
+
+  /* Forms */
   .form-row, .form-row-3 { grid-template-columns: 1fr; }
-  .auth-modal, .submit-modal { margin: 10px; }
-  .submit-modal-header, .submit-modal-body, .submit-modal-footer { padding: 20px; }
+  .auth-modal, .submit-modal { margin: 12px; border-radius: 14px; }
+  .submit-modal-body { padding: 20px; }
+  .submit-modal-footer { padding: 16px 20px; }
+
+  /* Admin */
+  .admin-sidebar { width: 200px; }
+  .admin-kpi-row { grid-template-columns: 1fr 1fr 1fr; }
+}
+
+/* ── MOBILE: 600px ── */
+@media (max-width: 600px) {
+  .nav { padding: 0 16px; height: 54px; }
+  .container, .container-sm { padding: 0 16px; }
+
+  /* Add bottom padding for tab bar */
+  .view { padding-bottom: 64px; }
+  .mobile-tab-bar { display: flex; }
+
+  /* Hero */
+  .hero { padding: 48px 0 40px; }
+  .hero-title { font-size: clamp(32px, 9vw, 48px); line-height: 1.08; }
+  .hero-sub { font-size: 15px; }
+  .hero-actions { flex-direction: column; gap: 10px; }
+  .hero-actions .btn { width: 100%; text-align: center; justify-content: center; }
+  .hero-eyebrow { font-size: 11px; }
+  .hero-trust { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .trust-stat { text-align: center; }
+  .trust-divider { display: none; }
+
+  /* Steps */
+  .steps-grid { grid-template-columns: 1fr; }
+  .step-card { padding: 20px 16px; }
+
+  /* Pain */
+  .pain-section { padding: 48px 0; }
+  .pain-grid { grid-template-columns: 1fr; gap: 12px; }
+
+  /* Traction */
+  .traction-metrics { grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  /* Directory filters */
+  .dir-header { flex-direction: column; gap: 10px; align-items: stretch; }
+  .search-bar-wrap { width: 100%; }
+  .dir-controls { flex-wrap: wrap; gap: 8px; }
+  .filters-scroll { flex-direction: column; }
+  .filter-group { width: 100%; }
+
+  /* Opp cards */
+  .opp-card > div:first-of-type { padding: 14px 16px 10px; }
+
+  /* Kanban — horizontal scroll on mobile */
+  .kanban {
+    grid-template-columns: none;
+    display: flex;
+    overflow-x: auto;
+    gap: 12px;
+    padding-bottom: 12px;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+  }
+  .kanban-col {
+    min-width: 260px;
+    scroll-snap-align: start;
+    flex-shrink: 0;
+  }
+
+  /* Tracker header */
+  .tracker-header { flex-direction: column; gap: 12px; align-items: flex-start; }
+  .stats-row { grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  /* Profile */
+  .profile-grid { grid-template-columns: 1fr; }
+  .profile-sidebar { position: static; }
+
+  /* Admin */
+  .admin-layout { flex-direction: column; }
+  .admin-sidebar {
+    width: 100%; height: auto;
+    position: static;
+    border-right: none;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding: 16px 0;
+  }
+  .admin-sidebar-section { display: flex; flex-wrap: wrap; gap: 4px; padding: 0 12px; margin-bottom: 12px; }
+  .admin-sidebar-label { width: 100%; }
+  .admin-nav-item { padding: 6px 12px; font-size: 12px; }
+  .admin-kpi-row { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .admin-main { padding: 16px; }
+
+  /* Detail */
+  .detail-title { font-size: 22px; }
+  .detail-badges { gap: 6px; }
+  .trust-grid { grid-template-columns: 1fr 1fr; }
+  .reviews-grid { grid-template-columns: 1fr; }
+
+  /* Modals */
+  .auth-modal { margin: 0; border-radius: 20px 20px 0 0; margin-top: auto; align-self: flex-end; width: 100%; max-width: 100%; }
+  .modal-overlay { align-items: flex-end; }
+  .submit-modal { margin: 0; border-radius: 20px 20px 0 0; max-height: 90vh; width: 100%; }
+  .submit-modal-body { max-height: 60vh; }
+  .reject-modal { margin: 0; border-radius: 20px 20px 0 0; width: 100%; }
+
+  /* Nav sign in */
+  .user-dropdown { right: -8px; min-width: 280px; }
+
+  /* Toast */
+  .toast { bottom: 76px; right: 12px; left: 12px; max-width: none; }
+}
+
+/* ── SMALL MOBILE: 380px ── */
+@media (max-width: 380px) {
+  .hero-title { font-size: 30px; }
+  .hero-trust { grid-template-columns: 1fr; }
+  .traction-metrics { grid-template-columns: 1fr; }
+  .stats-row { grid-template-columns: 1fr; }
+  .admin-kpi-row { grid-template-columns: 1fr; }
+  .nav-logo { font-size: 17px; }
 }
 
 /* ═══════════════════════════════════════════════════
@@ -1077,9 +1817,9 @@ body::after {
 
       <!-- SIGN IN FORM -->
       <div class="auth-form active" id="form-signin">
-        <button class="google-btn" onclick="showToast('Google OAuth would be configured in production','error')">
-          <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 002.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 01-7.18-2.54H1.83v2.07A8 8 0 008.98 17z"/><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 010-3.04V5.41H1.83a8 8 0 000 7.18l2.67-2.07z"/><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 001.83 5.4L4.5 7.49a4.77 4.77 0 014.48-3.3z"/></svg>
-          Continue with Google
+        <button class="google-btn" id="google-signin-btn" onclick="handleGoogleAuth('signin')">
+          <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 002.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 01-7.18-2.54H1.83v2.07A8 8 0 008.98 17z"/><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 010-3.04V5.41H1.83a8 8 0 000 7.18l2.67-2.07z"/><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 001.83 5.4L4.5 7.49a4.77 4.77 0 014.48-3.3z"/></svg>
+          <span class="google-btn-text">Continue with Google</span>
         </button>
         <div class="auth-divider"><div class="auth-divider-line"></div><div class="auth-divider-text">or</div><div class="auth-divider-line"></div></div>
         <div class="form-field">
@@ -1113,9 +1853,9 @@ body::after {
             </div>
           </div>
         </div>
-        <button class="google-btn" onclick="showToast('Google OAuth would be configured in production','error')">
-          <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 002.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 01-7.18-2.54H1.83v2.07A8 8 0 008.98 17z"/><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 010-3.04V5.41H1.83a8 8 0 000 7.18l2.67-2.07z"/><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 001.83 5.4L4.5 7.49a4.77 4.77 0 014.48-3.3z"/></svg>
-          Continue with Google
+        <button class="google-btn" id="google-signup-btn" onclick="handleGoogleAuth('signup')">
+          <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 002.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 01-7.18-2.54H1.83v2.07A8 8 0 008.98 17z"/><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 010-3.04V5.41H1.83a8 8 0 000 7.18l2.67-2.07z"/><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 001.83 5.4L4.5 7.49a4.77 4.77 0 014.48-3.3z"/></svg>
+          <span class="google-btn-text">Continue with Google</span>
         </button>
         <div class="auth-divider"><div class="auth-divider-line"></div><div class="auth-divider-text">or</div><div class="auth-divider-line"></div></div>
         <div class="form-row">
@@ -1272,31 +2012,6 @@ body::after {
   </div>
 </div>
 
-<!-- ══ REJECT REASON MODAL ══ -->
-<div class="modal-overlay" id="rejectModal">
-  <div class="reject-modal">
-    <div class="reject-modal-header">
-      <h3>Reject Submission</h3>
-      <p>Select a reason — this will be sent to the submitter.</p>
-    </div>
-    <div class="reject-modal-body">
-      <button class="reject-reason-btn" onclick="selectRejectReason(this)">🔍 Duplicate — we already have this opportunity listed</button>
-      <button class="reject-reason-btn" onclick="selectRejectReason(this)">📋 Incomplete information — key fields are missing or vague</button>
-      <button class="reject-reason-btn" onclick="selectRejectReason(this)">❌ Cannot verify — organisation or programme cannot be confirmed</button>
-      <button class="reject-reason-btn" onclick="selectRejectReason(this)">🚫 Ineligible type — does not meet FundMap listing standards</button>
-      <button class="reject-reason-btn" onclick="selectRejectReason(this)">💀 Expired — this programme has already closed or ended</button>
-      <div style="margin-top:12px">
-        <label style="font-size:11px;color:rgba(255,255,255,0.35);display:block;margin-bottom:6px;font-weight:600;letter-spacing:0.04em">CUSTOM NOTE (OPTIONAL)</label>
-        <textarea id="rejectCustomNote" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:10px 12px;font-family:var(--font-body);font-size:13px;color:rgba(255,255,255,0.7);outline:none;min-height:60px;resize:vertical" placeholder="Add any additional context for the submitter..."></textarea>
-      </div>
-    </div>
-    <div class="reject-modal-footer">
-      <button class="action-btn action-btn-view" onclick="closeModal('rejectModal')">Cancel</button>
-      <button class="action-btn action-btn-reject" onclick="confirmReject()">Confirm Rejection</button>
-    </div>
-  </div>
-</div>
-
 <!-- ══════════════ NAVBAR ══════════════ -->
 <nav class="nav" id="mainNav">
   <div class="nav-logo" onclick="showView('landing')">Fund<span>Map</span></div>
@@ -1307,30 +2022,116 @@ body::after {
     <button class="nav-link hidden" id="nav-investor" onclick="showView('investor')">Dashboard</button>
     <button class="nav-link hidden" id="nav-admin" onclick="showView('admin')" style="color:var(--accent)">⚡ Admin<span class="nav-admin-badge">SUPER</span></button>
   </div>
-  <div id="nav-right">
+  <div id="nav-right" style="display:flex;align-items:center;gap:10px">
     <button class="nav-auth-btn" id="nav-signin-btn" onclick="openModal('authModal')">Sign In →</button>
     <div class="user-menu hidden" id="user-menu">
       <button class="user-avatar" id="user-avatar-btn" onclick="toggleUserMenu()">
         <span class="user-avatar-initials" id="user-avatar-initials"></span>
-        <span id="user-avatar-name"></span>
+        <span class="user-avatar-name" id="user-avatar-name"></span>
         <span class="user-avatar-chevron">▾</span>
       </button>
       <div class="user-dropdown" id="user-dropdown">
         <div class="dropdown-header">
-          <div class="dropdown-name" id="dropdown-name"></div>
-          <div class="dropdown-email" id="dropdown-email"></div>
-          <span class="dropdown-type" id="dropdown-type"></span>
+          <div class="dropdown-avatar-large" id="dropdown-avatar-large"></div>
+          <div class="dropdown-header-text">
+            <div class="dropdown-name" id="dropdown-name"></div>
+            <div class="dropdown-email" id="dropdown-email"></div>
+            <span class="dropdown-type" id="dropdown-type"></span>
+          </div>
         </div>
-        <button class="dropdown-item" id="dropdown-nav-profile" onclick="showView('profile');toggleUserMenu()">📋 My Profile</button>
-        <button class="dropdown-item" id="dropdown-nav-tracker" onclick="showView('tracker');toggleUserMenu()">📊 Tracker</button>
-        <button class="dropdown-item" id="dropdown-nav-investor" onclick="showView('investor');toggleUserMenu()" style="display:none">🏦 Dashboard</button>
-        <button class="dropdown-item" id="dropdown-nav-admin" onclick="showView('admin');toggleUserMenu()" style="display:none;color:var(--accent)">⚡ Admin Panel</button>
-        <div class="dropdown-divider"></div>
-        <button class="dropdown-item danger" onclick="handleLogout()">→ Log Out</button>
+        <div class="dropdown-section">
+          <button class="dropdown-item" id="dropdown-nav-profile" onclick="showView('profile');toggleUserMenu()">
+            <span class="di-icon">📋</span><span class="di-label">My Profile</span>
+          </button>
+          <button class="dropdown-item" id="dropdown-nav-tracker" onclick="showView('tracker');toggleUserMenu()">
+            <span class="di-icon">📊</span><span class="di-label">Application Tracker</span>
+          </button>
+          <button class="dropdown-item" id="dropdown-nav-investor" onclick="showView('investor');toggleUserMenu()" style="display:none">
+            <span class="di-icon">🏦</span><span class="di-label">Investor Dashboard</span>
+          </button>
+          <button class="dropdown-item" id="dropdown-nav-admin" onclick="showView('admin');toggleUserMenu()" style="display:none">
+            <span class="di-icon">⚡</span><span class="di-label">Admin Panel</span><span class="di-badge">SUPER</span>
+          </button>
+        </div>
+        <div class="dropdown-section">
+          <button class="dropdown-item" onclick="showView('directory');toggleUserMenu()">
+            <span class="di-icon">🔍</span><span class="di-label">Browse Opportunities</span>
+          </button>
+          <button class="dropdown-item" onclick="showToast('Settings coming soon');toggleUserMenu()">
+            <span class="di-icon">⚙️</span><span class="di-label">Settings</span>
+          </button>
+        </div>
+        <div class="dropdown-section">
+          <button class="dropdown-item danger" onclick="handleLogout()">
+            <span class="di-icon">→</span><span class="di-label">Sign Out</span>
+          </button>
+        </div>
       </div>
     </div>
+    <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileDrawer()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </nav>
+
+<!-- ══════════════ MOBILE DRAWER ══════════════ -->
+<div class="mobile-drawer" id="mobile-drawer">
+  <div class="mobile-drawer-backdrop" onclick="closeMobileDrawer()"></div>
+  <div class="mobile-drawer-panel">
+    <div class="mobile-drawer-header">
+      <div class="mobile-drawer-logo">Fund<span>Map</span></div>
+      <button class="mobile-drawer-close" onclick="closeMobileDrawer()">✕</button>
+    </div>
+    <div class="mobile-drawer-user hidden" id="mobile-drawer-user">
+      <div class="mobile-drawer-avatar" id="mobile-drawer-avatar"></div>
+      <div>
+        <div class="mobile-drawer-user-name" id="mobile-drawer-name"></div>
+        <div class="mobile-drawer-user-type" id="mobile-drawer-type"></div>
+      </div>
+    </div>
+    <div class="drawer-nav-section">
+      <div class="drawer-nav-label">Explore</div>
+      <button class="drawer-nav-item" onclick="showView('directory');closeMobileDrawer()"><span class="dni-icon">🔍</span>Browse Opportunities</button>
+      <button class="drawer-nav-item" onclick="showView('landing');closeMobileDrawer()"><span class="dni-icon">🏠</span>Home</button>
+    </div>
+    <div class="drawer-nav-section" id="drawer-founder-section" style="display:none">
+      <div class="drawer-nav-label">Founder</div>
+      <button class="drawer-nav-item" onclick="showView('profile');closeMobileDrawer()"><span class="dni-icon">📋</span>My Profile</button>
+      <button class="drawer-nav-item" onclick="showView('tracker');closeMobileDrawer()"><span class="dni-icon">📊</span>Application Tracker</button>
+    </div>
+    <div class="drawer-nav-section" id="drawer-investor-section" style="display:none">
+      <div class="drawer-nav-label">Investor</div>
+      <button class="drawer-nav-item" onclick="showView('investor');closeMobileDrawer()"><span class="dni-icon">🏦</span>Investor Dashboard</button>
+    </div>
+    <div class="drawer-nav-section" id="drawer-admin-section" style="display:none">
+      <div class="drawer-nav-label">Admin</div>
+      <button class="drawer-nav-item" onclick="showView('admin');closeMobileDrawer()"><span class="dni-icon">⚡</span>Admin Panel</button>
+    </div>
+    <div class="drawer-nav-section" id="drawer-auth-section">
+      <div class="drawer-nav-label">Account</div>
+      <button class="drawer-nav-item" id="drawer-signin-btn" onclick="openModal('authModal');closeMobileDrawer()"><span class="dni-icon">→</span>Sign In / Sign Up</button>
+      <button class="drawer-nav-item danger hidden" id="drawer-signout-btn" onclick="handleLogout();closeMobileDrawer()"><span class="dni-icon">←</span>Sign Out</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ MOBILE TAB BAR ══════════════ -->
+<div class="mobile-tab-bar" id="mobile-tab-bar">
+  <div class="mobile-tab-bar-inner">
+    <button class="mobile-tab-btn active" id="tab-home" onclick="showView('landing');setActiveTab('home')">
+      <span class="tab-icon">🏠</span><span>Home</span>
+    </button>
+    <button class="mobile-tab-btn" id="tab-directory" onclick="showView('directory');setActiveTab('directory')">
+      <span class="tab-icon">🔍</span><span>Browse</span>
+    </button>
+    <button class="mobile-tab-btn" id="tab-tracker" onclick="handleTrackerTab()">
+      <span class="tab-icon">📊</span><span>Tracker</span>
+    </button>
+    <button class="mobile-tab-btn" id="tab-profile" onclick="handleProfileTab()">
+      <span class="tab-icon">👤</span><span>Profile</span>
+    </button>
+  </div>
+</div>
 
 <!-- ═══════════════════════════════════
      VIEW: LANDING
@@ -1494,6 +2295,10 @@ body::after {
       <div class="progress-bar-wrap"><div class="progress-bar-fill" id="profileProgress"></div></div>
       <div class="progress-label" id="progressLabel">Profile 65% complete</div>
     </div>
+
+    <!-- Google Connection Status — shown dynamically by JS -->
+    <div id="google-connection-section" style="margin-bottom:20px"></div>
+
     <div class="profile-grid">
       <div class="profile-card full-width">
         <div class="profile-card-header"><div class="profile-card-title">🏢 Company Basics</div><div class="complete">✓ Complete</div></div>
@@ -1542,33 +2347,9 @@ body::after {
   <div class="container tracker-view fade-in">
     <div class="tracker-header">
       <div><h1>Application Tracker</h1><p style="color:var(--muted);margin-top:4px;font-size:14px">Track every application. Never miss a deadline.</p></div>
-      <button class="btn btn-primary btn-sm" onclick="showView('directory')">+ Add from Directory</button>
+      <button class="btn btn-primary btn-sm" onclick="showView('directory')">+ Browse Funding</button>
     </div>
-    <div class="alert-bar">⚠️ <strong>2 deadlines this week:</strong> EIC Accelerator closes in 3 days · SBIR Phase I closes in 6 days</div>
-    <div class="stats-row">
-      <div class="stat-card"><div class="stat-num" id="stat-total">8</div><div class="stat-label">Total applications</div></div>
-      <div class="stat-card"><div class="stat-num" style="color:var(--accent2)">3</div><div class="stat-label">Submitted</div></div>
-      <div class="stat-card"><div class="stat-num" style="color:var(--accent3)">2</div><div class="stat-label">In progress</div></div>
-      <div class="stat-card"><div class="stat-num" style="color:var(--gold)">1</div><div class="stat-label">Decision pending</div></div>
-    </div>
-    <div class="kanban">
-      <div class="kanban-col"><div class="kanban-col-header">Saved <span class="kanban-count">2</span></div>
-        <div class="tracker-card" onclick="openDetail(1)"><div class="tracker-card-name">EIC Accelerator 2026</div><div class="tracker-card-org">European Innovation Council</div><div class="tracker-card-deadline soon">📅 ⚠ Feb 19, 2026</div><div class="tracker-card-amount">Up to €2.5M</div><div style="margin-top:8px"><span class="match-pill">✦ 91% match</span></div></div>
-        <div class="tracker-card" onclick="openDetail(4)"><div class="tracker-card-name">Techstars Chicago 2026</div><div class="tracker-card-org">Techstars</div><div class="tracker-card-deadline">📅 Mar 15, 2026</div><div class="tracker-card-amount">$120K + mentorship</div></div>
-      </div>
-      <div class="kanban-col"><div class="kanban-col-header">In Progress <span class="kanban-count">2</span></div>
-        <div class="tracker-card"><div class="tracker-card-name">Y Combinator W26</div><div class="tracker-card-org">Y Combinator</div><div class="tracker-card-deadline">📅 Feb 28, 2026</div><div class="tracker-card-amount">$500K</div><div class="tracker-card-note">Working on video essay. Need to clarify growth metrics.</div></div>
-        <div class="tracker-card"><div class="tracker-card-name">Innovate UK Smart Grant</div><div class="tracker-card-org">UK Research & Innovation</div><div class="tracker-card-deadline">📅 Mar 8, 2026</div><div class="tracker-card-amount">Up to £500K</div><div class="tracker-card-note">Waiting for co-founder to review section 4.</div></div>
-      </div>
-      <div class="kanban-col"><div class="kanban-col-header">Submitted <span class="kanban-count">3</span></div>
-        <div class="tracker-card"><div class="tracker-card-name">a16z Speedrun</div><div class="tracker-card-org">Andreessen Horowitz</div><div class="tracker-card-deadline">📅 Submitted Jan 12</div><div class="tracker-card-amount">Pre-seed check</div><div class="tracker-card-note">Followed up Jan 26. No response yet.</div></div>
-        <div class="tracker-card"><div class="tracker-card-name">First Round Capital</div><div class="tracker-card-org">First Round</div><div class="tracker-card-deadline">📅 Submitted Jan 28</div><div class="tracker-card-amount">Seed round</div></div>
-        <div class="tracker-card"><div class="tracker-card-name">Breakthrough Energy Fellows</div><div class="tracker-card-org">Breakthrough Energy</div><div class="tracker-card-deadline">📅 Submitted Feb 2</div><div class="tracker-card-amount">Up to $1M</div></div>
-      </div>
-      <div class="kanban-col"><div class="kanban-col-header">Decision <span class="kanban-count">1</span></div>
-        <div class="tracker-card" style="border-left:3px solid var(--gold)"><div class="tracker-card-name">500 Startups Batch 32</div><div class="tracker-card-org">500 Global</div><div class="tracker-card-deadline">📅 Interview Feb 24</div><div class="tracker-card-amount">$150K</div><div class="tracker-card-note">🎯 Interview confirmed! Prep call Feb 21.</div></div>
-      </div>
-    </div>
+    <div id="tracker-content"></div>
   </div>
 </div>
 
@@ -1814,13 +2595,42 @@ let selectedUserType = 'founder';
 // ═══════════════════════════════════════════
 // OPPORTUNITY DATA
 // ═══════════════════════════════════════════
-const opportunities = [
-  { id:1, logo:"🇪🇺", name:"EIC Accelerator 2026", org:"European Innovation Council", type:"Government Grant", stage:["Pre-seed","Seed","Series A"], geo:"Europe", amount:"Up to €2.5M", deadline:"Feb 19, 2026", urgent:true, status:"active", verified:"2 days ago", matchScore:91, communityRating:4.6, reviewCount:142, tags:["Deep Tech","Hardware","Climate","Europe"], desc:"The EIC Accelerator supports individual SMEs and startups to develop and scale up breakthrough innovations with EU-wide and global potential. Grant component plus equity investment.", fullDesc:"The EIC Accelerator supports individual SMEs and startups (including spin-offs and spin-outs) to develop and scale up breakthrough innovations. The EIC Accelerator provides a combination of grant financing and equity investment, with a total funding of €2.5M per project plus up to €15M equity.", eligibility:[{ok:true,text:"SMEs incorporated in an EU Member State or associated country"},{ok:true,text:"Technology Readiness Level (TRL) 5–6 minimum"},{ok:true,text:"Deep tech, cleantech, healthtech, or digital focus"},{ok:false,text:"Not open to large enterprises or universities as lead applicants"}], reviews:[{name:"Elena K.",rating:5,date:"Jan 2026",text:"The process is long but worth it. Make sure your TRL documentation is airtight."},{name:"David T.",rating:4,date:"Dec 2025",text:"The business innovation component is key — don't just focus on the tech."}], isNew:true },
-  { id:2, logo:"🚀", name:"Y Combinator W26", org:"Y Combinator", type:"Accelerator", stage:["Pre-seed","Seed"], geo:"Global", amount:"$500K", deadline:"Feb 28, 2026", urgent:false, status:"active", verified:"1 day ago", matchScore:87, communityRating:4.8, reviewCount:2847, tags:["Accelerator","Global","Any Sector"], desc:"The world's most prestigious startup accelerator. YC invests $500K in exchange for 7% equity, providing world-class mentorship, a powerful alumni network, and Demo Day exposure.", fullDesc:"Y Combinator invests $500,000 in exchange for 7% equity. Every company gets unlimited access to YC partners and the alumni network through an intensive 3-month batch program culminating in Demo Day.", eligibility:[{ok:true,text:"Any stage — pre-launch to post-revenue"},{ok:true,text:"Any sector or geography globally"},{ok:false,text:"Companies that have raised more than $2M are rarely accepted"}], reviews:[{name:"James H.",rating:5,date:"Feb 2026",text:"The network alone is worth it. Being in YC opens every door."},{name:"Mei L.",rating:5,date:"Jan 2026",text:"They want to understand why you, why now, and why this problem."}], isNew:false },
-  { id:3, logo:"🇺🇸", name:"SBIR Phase I", org:"US Department of Commerce", type:"Government Grant", stage:["Pre-seed","Seed"], geo:"USA", amount:"Up to $275K", deadline:"Mar 15, 2026", urgent:false, status:"active", verified:"4 days ago", matchScore:78, communityRating:3.9, reviewCount:416, tags:["Government","USA","Non-dilutive"], desc:"Small Business Innovation Research Phase I grants fund early-stage R&D for US-based small businesses. Non-dilutive. Strong preference for deep tech and scientific innovation.", fullDesc:"The SBIR program encourages domestic small businesses to engage in Federal Research/Research and Development that has the potential for commercialization. Phase I is a feasibility study exploring technical and commercial potential.", eligibility:[{ok:true,text:"US-based small business (fewer than 500 employees)"},{ok:true,text:"At least 51% US citizen or permanent resident owned"},{ok:false,text:"Non-US companies are ineligible"},{ok:false,text:"Pure software without scientific R&D component rarely funded"}], reviews:[{name:"Dr. Anita W.",rating:4,date:"Jan 2026",text:"Very bureaucratic process but the funding is genuinely non-dilutive and substantial."},{name:"Carlos M.",rating:3,date:"Nov 2025",text:"The application portal is a nightmare. Give yourself twice as long as you think."}], isNew:false },
-  { id:4, logo:"⚡", name:"Techstars Chicago Accelerator", org:"Techstars", type:"Accelerator", stage:["Pre-seed","Seed"], geo:"USA", amount:"$120K + mentorship", deadline:"Mar 15, 2026", urgent:false, status:"active", verified:"3 days ago", matchScore:83, communityRating:4.2, reviewCount:389, tags:["Accelerator","USA","Midwest","B2B"], desc:"Techstars Chicago is a mentorship-driven accelerator investing $120K into 10 startups per year. Focus on B2B and enterprise software for the Midwest ecosystem.", fullDesc:"Techstars Chicago connects entrepreneurs with mentors, investors, and community. The 3-month accelerator program culminates in Demo Day where startups present to 500+ investors.", eligibility:[{ok:true,text:"Pre-seed to seed stage startups"},{ok:true,text:"B2B, SaaS, enterprise software preferred"},{ok:true,text:"Willing to relocate to Chicago for the 3-month programme"},{ok:false,text:"Consumer apps or pure marketplace models rarely selected"}], reviews:[{name:"Sofia K.",rating:4,date:"Jan 2026",text:"The mentor network in Chicago is exceptional for B2B."},{name:"Wei Z.",rating:5,date:"Dec 2025",text:"Best 3 months of our startup journey."}], isNew:false },
-  { id:5, logo:"🌱", name:"Breakthrough Energy Fellows", org:"Breakthrough Energy", type:"Foundation", stage:["Seed","Series A"], geo:"Global", amount:"Up to $1M", deadline:"Apr 1, 2026", urgent:false, status:"active", verified:"6 days ago", matchScore:62, communityRating:4.5, reviewCount:87, tags:["Climate","Clean Energy","Global","Non-dilutive"], desc:"Breakthrough Energy Fellows program provides up to $1M in non-dilutive funding for scientists and entrepreneurs working on breakthrough clean energy technologies.", fullDesc:"The Breakthrough Energy Fellows program supports bold scientists and entrepreneurs working on early-stage technologies across five critical areas: electricity, transportation, agriculture, manufacturing, and buildings.", eligibility:[{ok:true,text:"Founders with scientific background working on climate innovation"},{ok:true,text:"Pre-seed to seed stage"},{ok:false,text:"B2B software without direct emissions impact not eligible"}], reviews:[{name:"Dr. Fatima A.",rating:5,date:"Dec 2025",text:"The technical review is rigorous but genuinely evaluates impact potential."},{name:"Ravi P.",rating:4,date:"Nov 2025",text:"They want to see that you've thought seriously about scale."}], isNew:false },
-  { id:6, logo:"🏛️", name:"Innovate UK Smart Grant", org:"UK Research & Innovation", type:"Government Grant", stage:["Pre-seed","Seed","Series A"], geo:"UK", amount:"£25K–£500K", deadline:"Mar 8, 2026", urgent:false, status:"active", verified:"5 days ago", matchScore:71, communityRating:3.7, reviewCount:623, tags:["Government","UK","R&D","Non-dilutive"], desc:"Innovate UK Smart grants fund game-changing and disruptive R&D innovations that can significantly impact the UK economy. Up to £500K for single companies.", fullDesc:"Smart is Innovate UK's flagship open funding competition, targeting disruptive or game-changing innovations with significant economic impact potential. Single companies can apply for between £25,000 and £500,000.", eligibility:[{ok:true,text:"UK-registered company"},{ok:true,text:"R&D-led with a clearly disruptive innovation"},{ok:false,text:"Companies not based primarily in the UK are ineligible"}], reviews:[{name:"Ben A.",rating:4,date:"Jan 2026",text:"Focus your narrative on the economic impact to UK plc, not just the technical novelty."},{name:"Laura T.",rating:3,date:"Dec 2025",text:"Very competitive. We applied twice — using a coach made a huge difference."}], isNew:true },
+let opportunities = [
+  { id:1, logo:"🇪🇺", name:"EIC Accelerator 2026", org:"European Innovation Council", type:"Government Grant", stage:["Pre-seed","Seed","Series A"], geo:"Europe", amount:"Up to €2.5M", deadline:"May 6, 2026", urgent:false, status:"active", verified:"Today", matchScore:91, communityRating:4.6, reviewCount:142, tags:["Deep Tech","Hardware","Climate","Europe"], desc:"The EIC Accelerator supports individual SMEs and startups to develop and scale up breakthrough innovations with EU-wide and global potential. Grant + equity investment up to €15M.", fullDesc:"The EIC Accelerator provides a combination of grant financing (up to €2.5M) and equity investment (up to €15M) for high-impact startups in deep tech, cleantech, and digital.", eligibility:[{ok:true,text:"SMEs in EU Member State or associated country"},{ok:true,text:"TRL 5–6 minimum"},{ok:true,text:"Deep tech, cleantech, healthtech, or digital"},{ok:false,text:"Not open to large enterprises as lead applicants"}], reviews:[{name:"Elena K.",rating:5,date:"Feb 2026",text:"Long process but worth it. TRL documentation is critical."},{name:"David T.",rating:4,date:"Jan 2026",text:"Business innovation component matters as much as tech."}], isNew:false, applyUrl:"https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/home" },
+
+  { id:2, logo:"🚀", name:"Y Combinator S26", org:"Y Combinator", type:"Accelerator", stage:["Pre-seed","Seed"], geo:"Global", amount:"$500K", deadline:"Apr 22, 2026", urgent:false, status:"active", verified:"Yesterday", matchScore:87, communityRating:4.8, reviewCount:3102, tags:["Accelerator","Global","Any Sector"], desc:"The world's most prestigious startup accelerator. $500K for 7% equity. 3-month programme in San Francisco ending with Demo Day to 5,000+ investors.", fullDesc:"Y Combinator invests $500,000 in exchange for 7% equity. Summer 2026 batch runs July–September in San Francisco. Unlimited access to YC partners, alumni, and the most powerful investor network on earth.", eligibility:[{ok:true,text:"Any stage — pre-launch to Series A"},{ok:true,text:"Any sector or geography"},{ok:false,text:"Prior raise over $2M rarely accepted"}], reviews:[{name:"James H.",rating:5,date:"Feb 2026",text:"The network opens every door."},{name:"Mei L.",rating:5,date:"Jan 2026",text:"Be crystal clear on why you, why now."}], isNew:true, applyUrl:"https://www.ycombinator.com/apply" },
+
+  { id:3, logo:"🇺🇸", name:"SBIR Phase I — NSF", org:"National Science Foundation", type:"Government Grant", stage:["Pre-seed","Seed"], geo:"USA", amount:"Up to $275K", deadline:"Jun 3, 2026", urgent:false, status:"active", verified:"3 days ago", matchScore:78, communityRating:3.9, reviewCount:416, tags:["Government","USA","Non-dilutive","R&D"], desc:"NSF SBIR Phase I funds early-stage R&D for US small businesses. Non-dilutive, equity-free. Strong preference for deep tech and scientific innovation with commercial potential.", fullDesc:"NSF SBIR Phase I awards support feasibility research for innovations with strong commercial and societal potential. Awards up to $275K over 6–12 months.", eligibility:[{ok:true,text:"US-based small business under 500 employees"},{ok:true,text:"51%+ US citizen or permanent resident owned"},{ok:false,text:"Non-US entities not eligible"},{ok:false,text:"Pure software without scientific basis rarely funded"}], reviews:[{name:"Dr. Anita W.",rating:4,date:"Feb 2026",text:"Bureaucratic but genuinely non-dilutive."},{name:"Carlos M.",rating:3,date:"Jan 2026",text:"Give yourself twice the time you think you need."}], isNew:false, applyUrl:"https://www.sbir.gov/apply" },
+
+  { id:4, logo:"⚡", name:"Techstars SF 2026", org:"Techstars", type:"Accelerator", stage:["Pre-seed","Seed"], geo:"USA", amount:"$120K", deadline:"May 6, 2026", urgent:false, status:"active", verified:"2 days ago", matchScore:83, communityRating:4.2, reviewCount:412, tags:["Accelerator","USA","San Francisco","B2B"], desc:"Techstars San Francisco accelerator — $120K investment, 3-month mentorship-driven programme, culminating in Demo Day before 500+ investors.", fullDesc:"Techstars SF connects startups with world-class mentors and investors. The 3-month programme ends with Demo Day and lifetime access to the Techstars global network.", eligibility:[{ok:true,text:"Pre-seed to seed stage"},{ok:true,text:"Any sector, generalist programme"},{ok:true,text:"Willing to be in SF for 3 months"},{ok:false,text:"Consumer apps without network effects rarely selected"}], reviews:[{name:"Sofia K.",rating:4,date:"Feb 2026",text:"The mentor network is exceptional."},{name:"Wei Z.",rating:5,date:"Jan 2026",text:"Best 3 months of our startup journey."}], isNew:true, applyUrl:"https://www.techstars.com/accelerators" },
+
+  { id:5, logo:"🌱", name:"Breakthrough Energy Fellows Cohort 6", org:"Breakthrough Energy", type:"Foundation", stage:["Pre-seed","Seed"], geo:"Global", amount:"Up to $3M", deadline:"Rolling 2026", urgent:false, status:"active", verified:"1 week ago", matchScore:62, communityRating:4.5, reviewCount:87, tags:["Climate","Clean Energy","Global","Non-dilutive"], desc:"Breakthrough Energy Fellows provides up to $3M non-dilutive funding for early-stage climate tech innovators. Cohort 6 begins September 2026.", fullDesc:"Supports scientists and entrepreneurs working on electricity, transportation, agriculture, manufacturing, and buildings. Full-time 1-year fellowship with stipend, lab costs, and expert network.", eligibility:[{ok:true,text:"Climate tech focus — 500M+ ton CO₂ reduction potential"},{ok:true,text:"Pre-seed to seed stage, under $2M raised"},{ok:false,text:"Pure software without emissions impact not eligible"}], reviews:[{name:"Dr. Fatima A.",rating:5,date:"Jan 2026",text:"Technical review is rigorous but evaluates real impact."},{name:"Ravi P.",rating:4,date:"Dec 2025",text:"They want to see you've thought seriously about scale."}], isNew:false, applyUrl:"https://befellows.smapply.org/" },
+
+  { id:6, logo:"🏛️", name:"Innovate UK Smart Grant", org:"UK Research & Innovation", type:"Government Grant", stage:["Pre-seed","Seed","Series A"], geo:"UK", amount:"£25K–£500K", deadline:"Apr 1, 2026", urgent:false, status:"active", verified:"4 days ago", matchScore:71, communityRating:3.7, reviewCount:623, tags:["Government","UK","R&D","Non-dilutive"], desc:"Innovate UK's flagship open funding competition for game-changing R&D innovations with major UK economic impact. Up to £500K for single companies.", fullDesc:"Smart is Innovate UK's open competition targeting disruptive innovations. Single companies can apply for £25K–£500K. Collaborative projects can receive more.", eligibility:[{ok:true,text:"UK-registered company"},{ok:true,text:"R&D-led, clearly disruptive innovation"},{ok:false,text:"Non-UK entities not eligible"}], reviews:[{name:"Ben A.",rating:4,date:"Feb 2026",text:"Focus on UK economic impact, not just technical novelty."},{name:"Laura T.",rating:3,date:"Jan 2026",text:"Very competitive. A consultant made a huge difference."}], isNew:false, applyUrl:"https://apply-for-innovation-funding.service.gov.uk/competition/search" },
+
+  { id:7, logo:"👼", name:"500 Global Flagship Fund", org:"500 Global", type:"VC / Angel", stage:["Pre-seed","Seed"], geo:"Global", amount:"$150K–$250K", deadline:"Rolling", urgent:false, status:"active", verified:"5 days ago", matchScore:76, communityRating:4.1, reviewCount:288, tags:["Angel","Global","Pre-seed","Seed"], desc:"500 Global invests in pre-seed and seed startups worldwide. One of the most prolific early-stage funds globally with 2,800+ portfolio companies across 80 countries.", fullDesc:"500 Global's flagship fund invests $150K–$250K at pre-seed and seed stages. Strong networks in Southeast Asia, Latin America, Middle East, and the US.", eligibility:[{ok:true,text:"Pre-seed or seed stage, any geography"},{ok:true,text:"Strong founding team with evidence of execution"},{ok:false,text:"Not suitable for pre-revenue ideas without traction"}], reviews:[{name:"Ama S.",rating:4,date:"Feb 2026",text:"Fast decision-making and great LATAM network."},{name:"Kiran R.",rating:4,date:"Jan 2026",text:"Good for internationally minded founders."}], isNew:false, applyUrl:"https://500.co/thefund" },
+
+  { id:8, logo:"🌐", name:"Google for Startups Accelerator", org:"Google", type:"Accelerator", stage:["Seed","Series A"], geo:"Global", amount:"Up to $350K in credits + equity-free", deadline:"Rolling 2026", urgent:false, status:"active", verified:"2 days ago", matchScore:80, communityRating:4.4, reviewCount:521, tags:["Accelerator","Global","AI","Tech"], desc:"Google for Startups Accelerator is a 3-month equity-free programme for AI-first startups. Includes up to $350K in Google Cloud credits, technical mentorship from Googlers, and investor access.", fullDesc:"The programme focuses on AI/ML startups. You get access to Google engineers, product experts, and a global demo event. Zero equity taken.", eligibility:[{ok:true,text:"AI-first or ML-driven product"},{ok:true,text:"Seed to Series A stage"},{ok:true,text:"Any country — multiple regional cohorts"},{ok:false,text:"Non-tech companies rarely accepted"}], reviews:[{name:"Priya N.",rating:5,date:"Feb 2026",text:"Google Cloud credits alone are worth $350K. The engineering mentorship is world-class."},{name:"Tobias L.",rating:4,date:"Jan 2026",text:"Excellent for AI startups needing compute infrastructure."}], isNew:true, applyUrl:"https://startup.google.com/programs/accelerator/" },
+
+  { id:9, logo:"🏗️", name:"a16z Speedrun — Pre-seed", org:"Andreessen Horowitz", type:"VC / Angel", stage:["Pre-seed"], geo:"USA", amount:"$1M–$3M", deadline:"Rolling", urgent:false, status:"active", verified:"1 week ago", matchScore:68, communityRating:4.3, reviewCount:174, tags:["Angel","Pre-seed","USA","Consumer","B2B"], desc:"a16z Speedrun is a pre-seed programme from one of the world's top VC firms. Fast decisions, large initial checks, and access to the full a16z platform.", fullDesc:"Andreessen Horowitz's early-stage programme invests $1M–$3M at pre-seed in exceptional founding teams. Focus on software, AI, crypto, fintech, and consumer.", eligibility:[{ok:true,text:"Pre-seed stage, usually pre-revenue"},{ok:true,text:"Based in or willing to relocate to USA"},{ok:false,text:"Hardware-only companies rarely funded"}], reviews:[{name:"Leo K.",rating:5,date:"Jan 2026",text:"The platform support is unreal. Portfolio intros opened our seed round."},{name:"Hannah G.",rating:4,date:"Dec 2025",text:"Fast process. They know quickly if they're interested."}], isNew:false, applyUrl:"https://a16z.com/speedrun/" },
+
+  { id:10, logo:"🦁", name:"Antler Global Residency", org:"Antler", type:"Accelerator", stage:["Pre-seed"], geo:"Global", amount:"$200K–$250K", deadline:"Rolling 2026", urgent:false, status:"active", verified:"3 days ago", matchScore:73, communityRating:4.0, reviewCount:298, tags:["Accelerator","Pre-seed","Global","Co-founder"], desc:"Antler is a global day-zero investor that helps exceptional people build companies from scratch. 10-week residency with $200K–$250K for 10–12% equity.", fullDesc:"Antler operates in 30+ cities. You join as an individual or team, go through an intensive co-founding and validation period, then pitch for investment. 10-12% equity for $200K–$250K.", eligibility:[{ok:true,text:"Individuals or early teams — even pre-idea"},{ok:true,text:"Any sector and any geography"},{ok:false,text:"Not suitable for post-seed companies"}], reviews:[{name:"Yuki T.",rating:4,date:"Feb 2026",text:"Great if you're looking for a co-founder. The residency is intense but clarifying."},{name:"Obi M.",rating:4,date:"Jan 2026",text:"Good network across Africa and Asia."}], isNew:true, applyUrl:"https://www.antler.co/apply" },
+
+  { id:11, logo:"💡", name:"Founders Factory Accelerator", org:"Founders Factory", type:"Accelerator", stage:["Pre-seed","Seed"], geo:"Europe", amount:"£250K + studio support", deadline:"Rolling 2026", urgent:false, status:"active", verified:"5 days ago", matchScore:65, communityRating:4.1, reviewCount:142, tags:["Accelerator","Europe","Studio","B2B"], desc:"Founders Factory is a global startup studio and accelerator backed by L'Oréal, Aviva, and Holtzbrinck. £250K investment plus hands-on build support for 6 months.", fullDesc:"Founders Factory has two tracks: accelerator (external startups, £250K) and studio (FF-built companies). Deep industry partnerships in media, beauty, finance, and mobility.", eligibility:[{ok:true,text:"Pre-seed to seed, early stage"},{ok:true,text:"UK or European companies preferred"},{ok:false,text:"Consumer hardware difficult without strong IP"}], reviews:[{name:"Rachel W.",rating:4,date:"Jan 2026",text:"The corporate partnership access is genuinely unique."},{name:"Dayo A.",rating:4,date:"Dec 2025",text:"Good operational support, not just money."}], isNew:false, applyUrl:"https://foundersfactory.com/accelerate/" },
+
+  { id:12, logo:"🌍", name:"Africa Seed Fund — Partech", org:"Partech Africa", type:"VC / Angel", stage:["Seed"], geo:"Africa", amount:"$1M–$5M", deadline:"Rolling", urgent:false, status:"active", verified:"1 week ago", matchScore:55, communityRating:4.2, reviewCount:63, tags:["Angel","Africa","Seed","Emerging Markets"], desc:"Partech Africa invests $1M–$5M at seed stage in tech startups across Sub-Saharan Africa. One of the continent's most active and respected seed funds.", fullDesc:"Partech Africa focuses on fintech, agritech, health, and mobility across Nigeria, Kenya, Francophone Africa, and South Africa.", eligibility:[{ok:true,text:"Tech startup with African market focus"},{ok:true,text:"Seed stage with some traction"},{ok:false,text:"Non-African market focus not considered"}], reviews:[{name:"Chidi O.",rating:5,date:"Feb 2026",text:"Best fund for pan-African ambitions. Deep continent expertise."},{name:"Amara D.",rating:4,date:"Jan 2026",text:"Strong Francophone Africa network is rare."}], isNew:false, applyUrl:"https://partechpartners.com/africa" },
+
+  { id:13, logo:"🔬", name:"Wellcome Leap R&D Fund", org:"Wellcome Trust", type:"Foundation", stage:["Pre-seed","Seed"], geo:"Global", amount:"Up to $1M+", deadline:"Rolling 2026", urgent:false, status:"active", verified:"4 days ago", matchScore:58, communityRating:4.6, reviewCount:47, tags:["Foundation","Global","Health","Non-dilutive","R&D"], desc:"Wellcome Leap funds ambitious R&D programmes that could deliver transformative health impact. Non-dilutive. Strong focus on biology, neuroscience, and quantum biology.", fullDesc:"Wellcome Leap's challenge-based programmes fund high-risk, high-reward health innovations. Each programme has specific milestones and is intensely milestone-driven.", eligibility:[{ok:true,text:"University spinouts, startups, or research teams"},{ok:true,text:"Bold health or biomedical technology focus"},{ok:false,text:"Commercial software without research component not eligible"}], reviews:[{name:"Dr. James P.",rating:5,date:"Jan 2026",text:"One of the best non-dilutive health funders globally. Very mission-driven."},{name:"Sara T.",rating:4,date:"Dec 2025",text:"Rigorous milestones but fair and supportive."}], isNew:false, applyUrl:"https://wellcomeleap.org/programs/" },
+
+  { id:14, logo:"🏦", name:"SBA Small Business Loan (7a)", org:"US Small Business Administration", type:"Government Grant", stage:["Seed","Series A"], geo:"USA", amount:"Up to $5M", deadline:"Rolling", urgent:false, status:"active", verified:"1 week ago", matchScore:60, communityRating:3.5, reviewCount:892, tags:["Government","USA","Loan","Non-dilutive"], desc:"The SBA 7(a) loan programme is the most common government-backed small business loan in the USA. Up to $5M with favourable terms. Not a grant — must be repaid.", fullDesc:"SBA 7(a) loans are partially guaranteed by the federal government, allowing banks to offer better terms to small businesses that might not otherwise qualify.", eligibility:[{ok:true,text:"US-registered for-profit business"},{ok:true,text:"Meets SBA size standards (varies by industry)"},{ok:false,text:"Non-US businesses not eligible"},{ok:false,text:"Not suitable for pure R&D pre-revenue companies"}], reviews:[{name:"Maria F.",rating:4,date:"Feb 2026",text:"Good rates if you qualify. Bank relationship matters a lot."},{name:"Derek W.",rating:3,date:"Jan 2026",text:"Paperwork is significant but worth it for the rates."}], isNew:false, applyUrl:"https://www.sba.gov/funding-programs/loans/7a-loans" },
+
+  { id:15, logo:"🧬", name:"Schmidt Futures Innovation Fund", org:"Schmidt Futures", type:"Foundation", stage:["Pre-seed","Seed"], geo:"Global", amount:"$100K–$1M", deadline:"Rolling 2026", urgent:false, status:"active", verified:"3 days ago", matchScore:64, communityRating:4.4, reviewCount:38, tags:["Foundation","Global","Science","Non-dilutive"], desc:"Schmidt Futures funds people and projects that leverage talent and technology to benefit humanity — especially at the intersection of AI, biology, and climate.", fullDesc:"Eric Schmidt's philanthropic initiative funds breakthrough science-led ventures. They back exceptional individuals who work at the frontier of AI, computational biology, and climate solutions.", eligibility:[{ok:true,text:"Science-led innovation with societal benefit"},{ok:true,text:"Global — no geography restriction"},{ok:false,text:"Business-only plays without scientific underpinning not funded"}], reviews:[{name:"Dr. Yara M.",rating:5,date:"Jan 2026",text:"Best funder for scientist-entrepreneurs. True long-term thinking."},{name:"Eric B.",rating:4,date:"Dec 2025",text:"Exceptional network access in AI and bio."}], isNew:true, applyUrl:"https://schmidtfutures.com/our-work/apply/" },
+
+  { id:16, logo:"🔥", name:"First Round Capital — Seed", org:"First Round Capital", type:"VC / Angel", stage:["Seed"], geo:"USA", amount:"$500K–$1.5M", deadline:"Rolling", urgent:false, status:"active", verified:"2 days ago", matchScore:72, communityRating:4.5, reviewCount:319, tags:["Angel","Seed","USA","B2B","Consumer"], desc:"First Round Capital is one of the most founder-friendly seed funds. Famous for investments in Uber, Square, and Warby Parker. Active seed investor in 2026.", fullDesc:"FRC invests $500K–$1.5M at seed stage across B2B software, consumer, fintech, and marketplace businesses. Known for operational support and community.", eligibility:[{ok:true,text:"Seed stage, US-based preferred"},{ok:true,text:"Software-led business model"},{ok:false,text:"Hardware or non-tech companies rarely funded"}], reviews:[{name:"Alex P.",rating:5,date:"Feb 2026",text:"The community platform is worth as much as the money."},{name:"Julia C.",rating:5,date:"Jan 2026",text:"Most founder-friendly seed fund. They actually help."}], isNew:false, applyUrl:"https://firstround.com/apply/" },
+
+  { id:17, logo:"🌏", name:"Sequoia Arc — Global Seed", org:"Sequoia Capital", type:"VC / Angel", stage:["Pre-seed","Seed"], geo:"Global", amount:"Up to $1M", deadline:"Rolling 2026", urgent:false, status:"active", verified:"4 days ago", matchScore:69, communityRating:4.7, reviewCount:201, tags:["Angel","Global","Pre-seed","Seed","AI"], desc:"Sequoia Arc is Sequoia's global pre-seed and seed programme for early-stage companies. Equity investment plus intensive support across the US, Europe, India, and Southeast Asia.", fullDesc:"Sequoia Arc runs regular global cohorts with intensive mentorship, peer networks, and follow-on access to Sequoia's main fund. Focus on AI, infrastructure, and consumer.", eligibility:[{ok:true,text:"Pre-seed or seed stage"},{ok:true,text:"Global — US, EU, India, SEA cohorts available"},{ok:false,text:"Post-Series A not eligible"}], reviews:[{name:"Nina K.",rating:5,date:"Feb 2026",text:"The brand alone opens every door. Arc is the best entry point."},{name:"Arjun S.",rating:4,date:"Jan 2026",text:"Cohort community is exceptional. Strong India programme."}], isNew:true, applyUrl:"https://www.sequoiacap.com/arc/" },
+
+  { id:18, logo:"💼", name:"Acumen Academy Fellowship", org:"Acumen", type:"Foundation", stage:["Pre-seed","Seed"], geo:"Global", amount:"$60K non-dilutive + network", deadline:"Mar 31, 2026", urgent:false, status:"active", verified:"5 days ago", matchScore:52, communityRating:4.3, reviewCount:76, tags:["Foundation","Global","Impact","Non-dilutive","Social Enterprise"], desc:"Acumen Fellows is a year-long leadership and funding programme for founders building companies that serve low-income communities. $60K non-dilutive stipend plus global cohort.", fullDesc:"Acumen's fellowship combines $60K in non-dilutive support with intensive leadership development and a global network of impact investors and social enterprise leaders.", eligibility:[{ok:true,text:"Social enterprise or impact-first business"},{ok:true,text:"Any geography — global cohorts across Africa, Asia, Americas"},{ok:false,text:"Not suitable for pure profit-first businesses without social mission"}], reviews:[{name:"Amira B.",rating:5,date:"Jan 2026",text:"Transformative for impact founders. The peer network lasts forever."},{name:"Samuel L.",rating:4,date:"Dec 2025",text:"The leadership curriculum is genuinely world-class."}], isNew:false, applyUrl:"https://acumen.org/fellowships/" },
 ];
 
 // ═══════════════════════════════════════════
@@ -1829,40 +2639,54 @@ const opportunities = [
 function showView(name) {
   const user = DB.getCurrentUser();
 
-  // Special: admin login check
+  // Auth guards
   if (name === 'admin') {
     if (!user || (user.type !== 'admin' && user.email !== ADMIN_EMAIL)) {
-      showToast('Admin access required', 'error');
-      return;
+      showToast('Admin access required', 'error'); return;
     }
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.getElementById('view-admin').classList.add('active');
-    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-    document.getElementById('nav-admin').classList.add('active');
-    window.scrollTo(0,0);
-    switchAdminPanel('overview');
-    return;
   }
-
-  // Gate gated views
-  if (['profile','tracker'].includes(name) && !user) {
-    openModal('authModal');
-    return;
-  }
+  if (['profile','tracker'].includes(name) && !user) { openModal('authModal'); return; }
   if (name === 'investor') {
     if (!user) { openModal('authModal'); return; }
-    if (user.type !== 'investor' && user.type !== 'admin') { showToast('This area is for investors','error'); return; }
+    if (user.type !== 'investor' && user.type !== 'admin') { showToast('This area is for investors', 'error'); return; }
   }
 
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.getElementById('view-' + name).classList.add('active');
-  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-  const navEl = document.getElementById('nav-' + name);
-  if (navEl) navEl.classList.add('active');
-  window.scrollTo(0,0);
+  // Crossfade: fade out current, then switch
+  const current = document.querySelector('.view.active');
+  const next    = document.getElementById('view-' + name);
+  if (!next) return;
+  if (current === next) return;
 
-  if (name === 'directory') renderOpps(getAllOpps());
-  if (name === 'investor') renderInvestorDashboard();
+  const doSwitch = () => {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    next.classList.add('active');
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    const navEl = document.getElementById('nav-' + name);
+    if (navEl) navEl.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (name === 'directory') {
+      showSkeletonCards(5);
+      setTimeout(() => renderOpps(getAllOpps()), 220);
+    }
+    if (name === 'tracker')   renderTracker();
+    if (name === 'profile')   renderGoogleConnectionSection();
+    if (name === 'investor')  renderInvestorDashboard();
+    if (name === 'admin')     switchAdminPanel('overview');
+  };
+
+  if (current) {
+    current.style.transition = 'opacity 0.18s ease, transform 0.18s ease';
+    current.style.opacity    = '0';
+    current.style.transform  = 'translateY(-6px)';
+    setTimeout(() => {
+      current.style.transition = '';
+      current.style.opacity    = '';
+      current.style.transform  = '';
+      doSwitch();
+    }, 180);
+  } else {
+    doSwitch();
+  }
 }
 
 // ═══════════════════════════════════════════
@@ -1945,12 +2769,11 @@ function handleSignUp() {
   const email = document.getElementById('signup-email').value.trim();
   const password = document.getElementById('signup-password').value;
 
-  // Clear errors
   document.querySelectorAll('#form-signup .form-error').forEach(e => e.classList.remove('show'));
 
   let valid = true;
   if (!email.includes('@')) { document.getElementById('signup-email-error').classList.add('show'); valid = false; }
-  if (password.length < 8) { document.getElementById('signup-pass-error').classList.add('show'); valid = false; }
+  if (password.length < 8)  { document.getElementById('signup-pass-error').classList.add('show'); valid = false; }
   if (!valid) return;
 
   const users = DB.getUsers();
@@ -1962,10 +2785,10 @@ function handleSignUp() {
   const newUser = {
     id: 'user_' + Date.now(),
     name: `${fname} ${lname}`.trim() || email.split('@')[0],
-    email,
-    password, // NOTE: Never store plain passwords in production! Use bcrypt.
+    email, password,
     type: selectedUserType,
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
+    profile: {}
   };
 
   users.push(newUser);
@@ -1973,78 +2796,110 @@ function handleSignUp() {
   DB.setCurrentUser(newUser);
   closeModal('authModal');
   updateNavForUser(newUser);
-  showToast(`Welcome to FundMap, ${newUser.name.split(' ')[0]}! 🎉`, 'success');
 
   if (newUser.type === 'investor') {
-    setTimeout(() => showView('investor'), 500);
+    showToast(`Welcome, ${newUser.name.split(' ')[0]}! Let's get your listings live. 🚀`, 'success');
+    setTimeout(() => showView('investor'), 400);
   } else {
-    setTimeout(() => showView('profile'), 500);
+    // Founders get the onboarding flow
+    setTimeout(() => startOnboarding(newUser), 400);
   }
 }
 
 function handleLogout() {
+  // 1. Close dropdown immediately
+  document.getElementById('user-dropdown').classList.remove('open');
+  document.getElementById('user-menu').classList.remove('open');
+  // 2. Clear session
   DB.clearCurrentUser();
+  // 3. Reset nav (hides user menu, shows sign-in)
   updateNavForUser(null);
-  toggleUserMenu();
-  showView('landing');
-  showToast('You\'ve been logged out');
+  // 4. Navigate home with a short delay so CSS settles
+  setTimeout(() => showView('landing'), 30);
+  showToast('Signed out. See you soon! 👋');
 }
 
 function updateNavForUser(user) {
-  const signinBtn = document.getElementById('nav-signin-btn');
-  const userMenu = document.getElementById('user-menu');
-  const avatarBtn = document.getElementById('user-avatar-btn');
+  const signinBtn  = document.getElementById('nav-signin-btn');
+  const userMenu   = document.getElementById('user-menu');
   const navProfile = document.getElementById('nav-profile');
   const navTracker = document.getElementById('nav-tracker');
-  const navInvestor = document.getElementById('nav-investor');
-  const navAdmin = document.getElementById('nav-admin');
-  const dropdownNavProfile = document.getElementById('dropdown-nav-profile');
-  const dropdownNavTracker = document.getElementById('dropdown-nav-tracker');
-  const dropdownNavInvestor = document.getElementById('dropdown-nav-investor');
-  const dropdownNavAdmin = document.getElementById('dropdown-nav-admin');
+  const navInvestor= document.getElementById('nav-investor');
+  const navAdmin   = document.getElementById('nav-admin');
+
+  const dNavProfile  = document.getElementById('dropdown-nav-profile');
+  const dNavTracker  = document.getElementById('dropdown-nav-tracker');
+  const dNavInvestor = document.getElementById('dropdown-nav-investor');
+  const dNavAdmin    = document.getElementById('dropdown-nav-admin');
 
   if (user) {
-    signinBtn.style.display = 'none';
+    // Hide sign-in, show user menu
+    signinBtn.classList.add('hidden');
     userMenu.classList.remove('hidden');
+
     const initials = user.name.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
     const firstName = user.name.split(' ')[0];
-    document.getElementById('user-avatar-initials').textContent = initials;
-    document.getElementById('user-avatar-name').textContent = firstName;
-    avatarBtn.className = 'user-avatar' + (user.type === 'investor' ? ' investor' : '') + (user.type === 'admin' ? ' investor' : '');
 
-    document.getElementById('dropdown-name').textContent = user.name;
+    document.getElementById('user-avatar-initials').textContent = initials;
+    document.getElementById('user-avatar-name').textContent    = firstName;
+
+    const avatarLarge = document.getElementById('dropdown-avatar-large');
+    if (avatarLarge) {
+      avatarLarge.textContent = initials;
+      avatarLarge.className   = 'dropdown-avatar-large' + (user.type !== 'founder' ? ' investor' : '');
+    }
+    document.getElementById('user-avatar-btn').className =
+      'user-avatar' + (user.type !== 'founder' ? ' investor' : '');
+
+    document.getElementById('dropdown-name').textContent  = user.name;
     document.getElementById('dropdown-email').textContent = user.email;
     const typeEl = document.getElementById('dropdown-type');
-    typeEl.textContent = user.type === 'investor' ? '🏦 Investor / Funder' : user.type === 'admin' ? '⚡ Super Admin' : '🚀 Founder';
-    typeEl.className = 'dropdown-type ' + (user.type === 'admin' ? 'investor' : user.type);
+    typeEl.textContent = user.type === 'investor' ? '🏦 Investor / Funder'
+                       : user.type === 'admin'    ? '⚡ Super Admin'
+                       :                            '🚀 Founder';
+    typeEl.className = 'dropdown-type ' + (user.type === 'admin' ? 'admin' : user.type);
 
-    const isAdmin = user.type === 'admin' || user.email === ADMIN_EMAIL;
+    const isAdmin    = user.type === 'admin' || user.email === ADMIN_EMAIL;
     const isInvestor = user.type === 'investor';
-    const isFounder = user.type === 'founder';
+    const isFounder  = user.type === 'founder';
 
-    navProfile.classList.toggle('hidden', !isFounder);
-    navTracker.classList.toggle('hidden', !isFounder);
+    navProfile.classList.toggle('hidden',  !isFounder);
+    navTracker.classList.toggle('hidden',  !isFounder);
     navInvestor.classList.toggle('hidden', !isInvestor && !isAdmin);
-    navAdmin.classList.toggle('hidden', !isAdmin);
+    navAdmin.classList.toggle('hidden',    !isAdmin);
 
-    dropdownNavProfile.style.display = isFounder ? 'flex' : 'none';
-    dropdownNavTracker.style.display = isFounder ? 'flex' : 'none';
-    dropdownNavInvestor.style.display = (isInvestor || isAdmin) ? 'flex' : 'none';
-    dropdownNavAdmin.style.display = isAdmin ? 'flex' : 'none';
+    dNavProfile.style.display  = isFounder             ? 'flex' : 'none';
+    dNavTracker.style.display  = isFounder             ? 'flex' : 'none';
+    dNavInvestor.style.display = (isInvestor||isAdmin) ? 'flex' : 'none';
+    dNavAdmin.style.display    = isAdmin               ? 'flex' : 'none';
+
   } else {
-    signinBtn.style.display = '';
+    // Logged out: show sign-in, FULLY hide user menu
+    signinBtn.classList.remove('hidden');
     userMenu.classList.add('hidden');
-    [navProfile, navTracker, navInvestor, navAdmin].forEach(n => n.classList.add('hidden'));
+    // Close dropdown
+    document.getElementById('user-dropdown').classList.remove('open');
+    userMenu.classList.remove('open');
+    // Hide all gated nav links
+    [navProfile, navTracker, navInvestor, navAdmin].forEach(n => { if (n) n.classList.add('hidden'); });
   }
+  // Sync mobile drawer if open
+  if (typeof syncMobileDrawerUser === 'function') syncMobileDrawerUser();
 }
 
 function toggleUserMenu() {
-  document.getElementById('user-dropdown').classList.toggle('open');
+  const menu = document.getElementById('user-menu');
+  const dropdown = document.getElementById('user-dropdown');
+  const isOpen = dropdown.classList.contains('open');
+  dropdown.classList.toggle('open', !isOpen);
+  menu.classList.toggle('open', !isOpen);
 }
+
 document.addEventListener('click', (e) => {
   const menu = document.getElementById('user-menu');
   if (menu && !menu.contains(e.target)) {
     document.getElementById('user-dropdown').classList.remove('open');
+    menu.classList.remove('open');
   }
 });
 
@@ -2225,51 +3080,74 @@ function renderInvestorDashboard() {
 // DIRECTORY
 // ═══════════════════════════════════════════
 function getAllOpps() {
+  // Expose for recalcMatchScores mutation
+  window._OPPS = opportunities;
   // Merge scraped + approved investor submissions
   const subs = DB.getSubmissions().filter(s => s.status === 'live');
   const mappedSubs = subs.map(s => ({
-    ...s,
-    logo: '🏢',
-    urgent: false,
+    ...s, logo: '🏢', urgent: false,
     matchScore: Math.floor(Math.random() * 30) + 50,
-    communityRating: 0,
-    reviewCount: 0,
-    reviews: [],
-    isNew: true,
+    communityRating: 0, reviewCount: 0, reviews: [], isNew: true,
     eligibility: s.eligibility || [],
   }));
   return [...opportunities, ...mappedSubs];
+}
+
+function getTypeChipClass(type) {
+  if (!type) return 'chip-government';
+  const t = type.toLowerCase();
+  if (t.includes('accelerator')) return 'chip-accelerator';
+  if (t.includes('government') || t.includes('grant')) return 'chip-government';
+  if (t.includes('vc') || t.includes('angel')) return 'chip-vc';
+  if (t.includes('foundation')) return 'chip-foundation';
+  if (t.includes('angel')) return 'chip-angel';
+  return 'chip-government';
+}
+
+function getTypeIcon(type) {
+  if (!type) return '🏛️';
+  const t = type.toLowerCase();
+  if (t.includes('accelerator')) return '⚡';
+  if (t.includes('government') || t.includes('grant')) return '🏛️';
+  if (t.includes('vc') || t.includes('angel')) return '👼';
+  if (t.includes('foundation')) return '🔬';
+  return '💼';
 }
 
 function renderOpps(list) {
   const container = document.getElementById('oppsList');
   const countEl = document.getElementById('resultsCount');
   countEl.innerHTML = `<strong>${list.length}</strong> opportunit${list.length !== 1 ? 'ies' : 'y'} found`;
-  if (list.length === 0) { container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🔍</div><h3>No opportunities found</h3><p>Try adjusting your filters or search terms</p></div>`; return; }
+  if (list.length === 0) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🔍</div><h3>No opportunities found</h3><p>Try adjusting your filters or search terms</p></div>`;
+    return;
+  }
   container.innerHTML = list.map((o, idx) => `
-    <div class="opp-card" style="animation-delay:${idx*0.04}s" onclick="openDetail('${o.id}')">
-      <div class="opp-logo">${o.logo || '🏢'}</div>
-      <div class="opp-main">
-        <div class="opp-top">
-          <div>
-            <div class="opp-name">${o.name} ${o.isNew ? '<span class="badge badge-new" style="font-size:10px;vertical-align:middle">NEW</span>' : ''}</div>
-            <div class="opp-org">${o.org}</div>
+    <div class="opp-card" style="animation-delay:${idx*0.03}s;margin-bottom:12px;position:relative" onclick="openDetail('${o.id}')">
+      ${o.isNew ? `<div style="position:absolute;top:14px;right:0;background:var(--accent);color:#fff;font-family:var(--font-display);font-size:9px;font-weight:800;letter-spacing:0.08em;padding:3px 10px 3px 8px;border-radius:4px 0 0 4px">NEW</div>` : ''}
+      <div style="display:flex;align-items:flex-start;gap:14px;padding:20px 22px 14px">
+        <div style="width:46px;height:46px;border-radius:10px;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">${o.logo || '🏢'}</div>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+            <div>
+              <div style="font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--ink);letter-spacing:-0.01em;line-height:1.3;margin-bottom:2px">${o.name}</div>
+              <div style="font-size:12px;color:var(--muted);font-weight:500">${o.org}</div>
+            </div>
+            <div style="font-family:var(--font-display);font-size:14px;font-weight:800;color:var(--accent2);background:rgba(42,107,74,0.07);border:1px solid rgba(42,107,74,0.14);border-radius:6px;padding:4px 10px;white-space:nowrap;flex-shrink:0">${o.amount}</div>
           </div>
-          <div class="opp-right">
-            <div class="opp-amount">${o.amount}</div>
-            <span class="badge badge-${o.status || 'active'}">● Active</span>
-          </div>
+          <div style="font-size:13px;color:var(--ink2);line-height:1.5;margin:10px 0 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${o.desc}</div>
         </div>
-        <div class="opp-meta">
-          <span class="opp-deadline ${o.urgent ? 'urgent' : ''}">📅 ${o.urgent ? '⚠ ' : ''}${o.deadline}</span>
-          ${(o.tags||[]).map(t => `<span class="tag">${t}</span>`).join('')}
-        </div>
-        <div class="opp-desc">${o.desc}</div>
-        <div class="opp-footer">
-          <span class="match-pill">✦ ${o.matchScore}% match</span>
-          <span class="badge badge-verified">✓ Verified</span>
-          ${o.reviewCount ? `<span style="font-size:11px;color:var(--muted)">★ ${o.communityRating} (${o.reviewCount} reviews)</span>` : '<span style="font-size:11px;color:var(--muted)">Community-submitted</span>'}
-        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;padding:10px 22px;background:var(--surface2);border-top:1px solid var(--border);flex-wrap:wrap">
+        <span class="opp-type-chip ${getTypeChipClass(o.type)}">${getTypeIcon(o.type)} ${o.type}</span>
+        <span style="font-size:10px;color:var(--muted);background:var(--bg2);border:1px solid var(--border);padding:2px 7px;border-radius:4px;font-weight:600">🌍 ${o.geo}</span>
+        ${(o.stage||[]).slice(0,1).map(s => `<span style="font-size:10px;color:var(--muted);background:var(--bg2);border:1px solid var(--border);padding:2px 7px;border-radius:4px;font-weight:600">${s}</span>`).join('')}
+        <span style="margin-left:auto">${buildMatchPill(o.matchScore, [
+          o.stage && o.stage[0] ? 'Stage: ' + o.stage[0] : 'Any stage',
+          'Location: ' + o.geo,
+          o.tags && o.tags[0] ? o.tags[0] : 'Active'
+        ])}</span>
+        <span style="font-size:11px;color:var(--muted);white-space:nowrap">📅 ${o.deadline}</span>
       </div>
     </div>`).join('');
 }
@@ -2322,7 +3200,7 @@ function loadDetail(o) {
     </div>
     <div style="display:flex;gap:12px;flex-wrap:wrap">
       <button class="btn btn-primary" onclick="addToTrackerById('${o.id}')">Save to Tracker</button>
-      <button class="btn btn-green" onclick="showToast('Opening application portal...')">Apply Now ↗</button>
+      <button class="btn btn-green" onclick="window.open('${o.applyUrl || '#'}','_blank')">Apply Now ↗</button>
       <button class="btn btn-ghost btn-sm" onclick="showToast('Thanks for flagging. We\'ll review within 24 hours.')">⚑ Flag as outdated</button>
     </div>`;
 
@@ -2345,7 +3223,7 @@ function loadDetail(o) {
       <div style="background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:20px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
           <span style="font-family:var(--font-display);font-weight:700">Luminary Labs × ${o.name}</span>
-          <span class="match-pill" style="font-size:14px;padding:5px 12px">✦ ${o.matchScore}% match</span>
+          ${buildMatchPill(o.matchScore, [o.stage && o.stage[0] ? 'Stage: '+o.stage[0] : 'Any stage', 'Location: '+o.geo, o.tags && o.tags[0] ? o.tags[0] : 'Active'])}
         </div>
         <div style="background:var(--bg2);border-radius:6px;height:8px;overflow:hidden">
           <div style="background:linear-gradient(90deg,var(--accent2),#4CAF50);height:100%;width:${o.matchScore}%;border-radius:6px;transition:width 0.6s ease"></div>
@@ -2363,6 +3241,7 @@ function loadDetail(o) {
       <p>Complete your profile to unlock auto-fill for this application.</p>
       <div class="apply-btns">
         <button class="btn btn-primary" onclick="addToTrackerById('${o.id}')">Save to Tracker</button>
+        <button class="btn btn-green" onclick="window.open('${o.applyUrl || '#'}','_blank')">Apply Now ↗</button>
         <button class="btn btn-secondary" onclick="showView('profile')">Complete My Profile</button>
       </div>
     </div>`;
@@ -2395,8 +3274,28 @@ function showToast(msg, type = '') {
   const toast = document.getElementById('toast');
   toast.textContent = msg;
   toast.className = 'toast' + (type ? ' ' + type : '');
+  // Reset animation
+  toast.style.animation = 'none';
+  toast.offsetHeight; // reflow
+  toast.style.animation = '';
   toast.classList.add('show');
   setTimeout(() => toast.classList.remove('show'), 3200);
+}
+
+function showSkeletonCards(n = 4) {
+  const container = document.getElementById('oppsList');
+  if (!container) return;
+  container.innerHTML = Array.from({length: n}, () => `
+    <div class="skeleton-card">
+      <div class="skeleton-block" style="width:46px;height:46px;border-radius:10px"></div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:10px">
+        <div class="skeleton-block" style="height:16px;width:55%"></div>
+        <div class="skeleton-block" style="height:12px;width:35%"></div>
+        <div class="skeleton-block" style="height:12px;width:80%"></div>
+        <div class="skeleton-block" style="height:12px;width:65%"></div>
+      </div>
+      <div class="skeleton-block" style="width:80px;height:28px;border-radius:6px"></div>
+    </div>`).join('');
 }
 
 // ═══════════════════════════════════════════
@@ -2841,10 +3740,816 @@ function formatDate(iso) {
     return new Date(iso).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
   } catch(e) { return iso; }
 }
+
+// ═══════════════════════════════════════════
+// ONBOARDING FLOW
+// ═══════════════════════════════════════════
+let obStep = 0;
+const obTotalSteps = 4; // 0=welcome, 1=sector, 2=stage, 3=geo
+const obSelections = { sector: [], stage: [], geo: [] };
+
+const obConfig = [
+  {
+    heading: 'Welcome to FundMap 🎉',
+    sub: 'Let\'s personalise your funding matches in 3 quick steps.',
+    btn: 'Let\'s go →',
+    progress: 0
+  },
+  {
+    heading: 'What sector are you in?',
+    sub: 'Select all that apply — we\'ll surface the most relevant grants and programmes.',
+    btn: 'Next →',
+    progress: 33
+  },
+  {
+    heading: 'What stage is your startup?',
+    sub: 'We\'ll use this to filter funding that\'s actually available to you right now.',
+    btn: 'Next →',
+    progress: 66
+  },
+  {
+    heading: 'Where are you based?',
+    sub: 'Many grants are region-specific — this ensures you only see eligible opportunities.',
+    btn: 'See my matches →',
+    progress: 90
+  }
+];
+
+function startOnboarding(user) {
+  obStep = 0;
+  obSelections.sector = [];
+  obSelections.stage = [];
+  obSelections.geo = [];
+  document.querySelectorAll('.onboarding-chip').forEach(c => c.classList.remove('selected'));
+  renderObStep(0);
+  document.getElementById('onboardingOverlay').classList.add('open');
+}
+
+function renderObStep(step) {
+  const cfg = obConfig[step];
+  document.getElementById('ob-heading').textContent = cfg.heading;
+  document.getElementById('ob-subheading').textContent = cfg.sub;
+  document.getElementById('ob-next-btn').textContent = cfg.btn;
+  document.getElementById('ob-progress').style.width = cfg.progress + '%';
+
+  // Update dots
+  for (let i = 0; i < obTotalSteps; i++) {
+    const dot = document.getElementById('ob-dot-' + i);
+    if (!dot) continue;
+    dot.classList.remove('active', 'done');
+    if (i < step) dot.classList.add('done');
+    else if (i === step) dot.classList.add('active');
+  }
+
+  // Show/hide steps
+  document.querySelectorAll('.onboarding-step').forEach((el, i) => {
+    el.classList.remove('active');
+    if (i === step) el.classList.add('active');
+  });
+}
+
+function toggleChip(el, key, mode = 'multi') {
+  if (mode === 'single') {
+    // Deselect siblings in same group
+    el.closest('.onboarding-chips').querySelectorAll('.onboarding-chip').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    obSelections[key] = [el.textContent.split('\n')[0].replace(/[^\w\s\/]/g, '').trim()];
+  } else {
+    el.classList.toggle('selected');
+    const val = el.textContent.split('\n')[0].trim();
+    if (el.classList.contains('selected')) {
+      obSelections[key].push(val);
+    } else {
+      obSelections[key] = obSelections[key].filter(v => v !== val);
+    }
+  }
+}
+
+function onboardingNext() {
+  if (obStep < obTotalSteps - 1) {
+    obStep++;
+    renderObStep(obStep);
+  } else {
+    finishOnboarding();
+  }
+}
+
+function skipOnboarding() {
+  document.getElementById('onboardingOverlay').classList.remove('open');
+  showToast('No worries — update your profile anytime to get better matches.', '');
+  setTimeout(() => showView('directory'), 300);
+}
+
+function finishOnboarding() {
+  document.getElementById('onboardingOverlay').classList.remove('open');
+
+  // Save profile selections to user
+  const user = DB.getCurrentUser();
+  if (user) {
+    user.profile = user.profile || {};
+    user.profile.sectors  = obSelections.sector;
+    user.profile.stage    = obSelections.stage[0] || '';
+    user.profile.geo      = obSelections.geo[0] || '';
+    user.profile.onboarded = true;
+
+    // Recalculate match scores based on selections
+    if (obSelections.sector.length || obSelections.stage.length || obSelections.geo.length) {
+      recalcMatchScores(user.profile);
+    }
+
+    const users = DB.getUsers();
+    const idx = users.findIndex(u => u.id === user.id);
+    if (idx > -1) { users[idx] = user; DB.saveUsers(users); }
+    DB.setCurrentUser(user);
+  }
+
+  const firstName = user ? user.name.split(' ')[0] : 'there';
+  showToast(`Perfect, ${firstName}! Your matches are ready ✦`, 'success');
+  setTimeout(() => {
+    showView('directory');
+    // Pulse the match pills to draw attention
+    setTimeout(() => {
+      document.querySelectorAll('.match-pill').forEach((pill, i) => {
+        setTimeout(() => {
+          pill.style.transform = 'scale(1.1)';
+          pill.style.transition = 'transform 0.2s';
+          setTimeout(() => { pill.style.transform = ''; }, 200);
+        }, i * 60);
+      });
+    }, 600);
+  }, 350);
+}
+
+function recalcMatchScores(profile) {
+  // Boost match scores for opps matching user's profile
+  // This mutates the in-memory OPPS array for the session
+  if (!profile) return;
+  const stageMap = {
+    'Idea stage': ['Pre-seed'],
+    'Building MVP': ['Pre-seed'],
+    'Pre-seed': ['Pre-seed', 'Seed'],
+    'Seed': ['Seed', 'Series A'],
+    'Series A+': ['Series A']
+  };
+  const userStages = stageMap[profile.stage] || [];
+  const userGeo = (profile.geo || '').replace(/[🇺🇸🇬🇧🇪🇺🇮🇳🌍🌏🇨🇦🌐]/gu, '').trim();
+
+  // Map geo chip text to opp geo values
+  const geoMap = {
+    'United States': 'USA', 'United Kingdom': 'UK',
+    'Europe (EU)': 'Europe', 'India': 'India',
+    'Africa': 'Africa', 'Southeast Asia': 'Global',
+    'Canada': 'USA', 'Global / Remote': 'Global'
+  };
+  const mappedGeo = geoMap[userGeo] || userGeo;
+
+  window._OPPS && window._OPPS.forEach(o => {
+    let score = 50;
+    // Stage match
+    if (userStages.length && o.stage && o.stage.some(s => userStages.includes(s))) score += 20;
+    // Geo match
+    if (mappedGeo && (o.geo === mappedGeo || o.geo === 'Global')) score += 15;
+    // Sector/tag match
+    const oppTags = (o.tags || []).map(t => t.toLowerCase());
+    const userSectors = (profile.sectors || []).map(s => s.replace(/[^\w\s]/g, '').trim().toLowerCase());
+    if (userSectors.some(s => oppTags.some(t => t.includes(s.split(' ')[0])))) score += 15;
+    o.matchScore = Math.min(99, Math.max(40, score));
+  });
+}
+
+// ═══════════════════════════════════════════
+// TRACKER — DYNAMIC RENDERER
+// ═══════════════════════════════════════════
+// Tracker items stored per-user in localStorage
+function getTrackerItems() {
+  const user = DB.getCurrentUser();
+  if (!user) return [];
+  const key = 'fundmap_tracker_' + user.id;
+  try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch { return []; }
+}
+
+function saveTrackerItems(items) {
+  const user = DB.getCurrentUser();
+  if (!user) return;
+  localStorage.setItem('fundmap_tracker_' + user.id, JSON.stringify(items));
+}
+
+function addToTrackerById(oppId) {
+  const user = DB.getCurrentUser();
+  if (!user) { openModal('authModal'); return; }
+  const all = getAllOpps();
+  const opp = all.find(o => String(o.id) === String(oppId));
+  if (!opp) return;
+  const items = getTrackerItems();
+  if (items.find(i => String(i.oppId) === String(oppId))) {
+    showToast('Already in your tracker!', '');
+    return;
+  }
+  items.push({
+    oppId: opp.id, name: opp.name, org: opp.org,
+    amount: opp.amount, deadline: opp.deadline,
+    matchScore: opp.matchScore, logo: opp.logo,
+    status: 'saved', note: '', addedAt: new Date().toISOString()
+  });
+  saveTrackerItems(items);
+  showToast(`"${opp.name}" saved to tracker 📊`, 'success');
+}
+
+function renderTracker() {
+  const container = document.getElementById('tracker-content');
+  if (!container) return;
+  const items = getTrackerItems();
+
+  if (items.length === 0) {
+    container.innerHTML = `
+      <div class="tracker-empty-state">
+        <div class="tracker-empty-icon">📊</div>
+        <div class="tracker-empty-title">Your tracker is empty</div>
+        <div class="tracker-empty-sub">Save funding opportunities from the directory and track every application from one place — deadlines, notes, and status all in one board.</div>
+        <div class="tracker-empty-steps">
+          <div class="tracker-empty-step">
+            <div class="tes-num">1</div>
+            <div class="tes-text"><strong>Browse the directory</strong>Find grants, accelerators, and VCs that match your startup</div>
+          </div>
+          <div class="tracker-empty-step">
+            <div class="tes-num">2</div>
+            <div class="tes-text"><strong>Save to tracker</strong>Hit "Save to Tracker" on any opportunity card</div>
+          </div>
+          <div class="tracker-empty-step">
+            <div class="tes-num">3</div>
+            <div class="tes-text"><strong>Track your progress</strong>Move cards across columns as you apply — Saved → In Progress → Submitted → Decision</div>
+          </div>
+        </div>
+        <div style="margin-bottom:20px">
+          <div class="tracker-demo-label">Example card</div>
+          <div class="tracker-demo-card" onclick="openDetail(1)">
+            <div class="tracker-demo-name">EIC Accelerator 2026</div>
+            <div class="tracker-demo-org">European Innovation Council</div>
+            <div class="tracker-demo-footer">
+              <span class="match-pill" style="font-size:11px">✦ 91% match</span>
+              <span style="font-size:11px;color:var(--muted)">📅 May 6, 2026</span>
+              <span style="font-size:11px;color:var(--muted);background:var(--bg2);padding:2px 8px;border-radius:4px;border:1px solid var(--border)">Up to €2.5M</span>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="showView('directory')" style="width:100%;justify-content:center">Browse Funding Opportunities →</button>
+      </div>`;
+    return;
+  }
+
+  // Group by status
+  const cols = [
+    { key: 'saved',       label: 'Saved',       color: 'var(--ink2)' },
+    { key: 'inprogress',  label: 'In Progress',  color: 'var(--accent3)' },
+    { key: 'submitted',   label: 'Submitted',    color: 'var(--accent2)' },
+    { key: 'decision',    label: 'Decision',     color: 'var(--gold)' },
+  ];
+  const grouped = {};
+  cols.forEach(c => grouped[c.key] = items.filter(i => i.status === c.key));
+
+  const total = items.length;
+  const submitted = grouped.submitted.length;
+  const inprog = grouped.inprogress.length;
+  const decision = grouped.decision.length;
+
+  container.innerHTML = `
+    <div class="stats-row" style="margin-bottom:20px">
+      <div class="stat-card"><div class="stat-num">${total}</div><div class="stat-label">Total saved</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:var(--accent3)">${inprog}</div><div class="stat-label">In progress</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:var(--accent2)">${submitted}</div><div class="stat-label">Submitted</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:var(--gold)">${decision}</div><div class="stat-label">Decision</div></div>
+    </div>
+    <div class="kanban">
+      ${cols.map(col => `
+        <div class="kanban-col" data-col="${col.key}">
+          <div class="kanban-col-header" style="color:${col.color}">
+            ${col.label} <span class="kanban-count">${grouped[col.key].length}</span>
+          </div>
+          ${grouped[col.key].length === 0 ? `
+            <div style="border:1.5px dashed var(--border);border-radius:10px;padding:20px 14px;text-align:center;color:var(--muted);font-size:12px;margin-top:4px">
+              Drop cards here
+            </div>` : ''}
+          ${grouped[col.key].map(item => renderTrackerCard(item, col.key, cols)).join('')}
+        </div>`).join('')}
+    </div>`;
+}
+
+function renderTrackerCard(item, currentCol, cols) {
+  const otherCols = cols.filter(c => c.key !== currentCol);
+  const moveOpts = otherCols.map(c => `<option value="${c.key}">${c.label}</option>`).join('');
+  const urgency = isUrgent(item.deadline);
+  return `
+    <div class="tracker-card" style="${currentCol === 'decision' ? 'border-left:3px solid var(--gold)' : ''}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+        <div style="flex:1;min-width:0">
+          <div class="tracker-card-name" onclick="openDetail('${item.oppId}')" style="cursor:pointer">${item.name}</div>
+          <div class="tracker-card-org">${item.org}</div>
+        </div>
+        <button onclick="removeFromTracker('${item.oppId}')" title="Remove" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px;padding:0;flex-shrink:0;line-height:1" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">✕</button>
+      </div>
+      <div class="tracker-card-deadline ${urgency ? 'soon' : ''}" style="margin-top:6px">📅 ${urgency ? '⚠ ' : ''}${item.deadline}</div>
+      <div class="tracker-card-amount">${item.amount}</div>
+      ${item.matchScore ? `
+        <div style="margin-top:8px">
+          ${buildMatchPill(item.matchScore, ['Matches your stage', 'Matches geography', 'Active deadline'])}
+        </div>` : ''}
+      ${item.note ? `<div class="tracker-card-note">${item.note}</div>` : ''}
+      <div style="margin-top:10px;display:flex;align-items:center;gap:6px">
+        <select onchange="moveTrackerItem('${item.oppId}',this.value)" style="flex:1;font-size:11px;padding:5px 8px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--ink2);cursor:pointer;font-family:var(--font-body)" title="Move to…">
+          <option value="">Move to…</option>
+          ${moveOpts}
+        </select>
+        <button onclick="editTrackerNote('${item.oppId}')" style="font-size:11px;padding:5px 10px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--ink2);cursor:pointer;font-family:var(--font-body)" title="Add note">✏</button>
+      </div>
+    </div>`;
+}
+
+function isUrgent(deadline) {
+  if (!deadline || deadline === 'Rolling') return false;
+  const d = new Date(deadline);
+  if (isNaN(d)) return false;
+  return (d - new Date()) < 14 * 86400000;
+}
+
+function moveTrackerItem(oppId, newStatus) {
+  if (!newStatus) return;
+  const items = getTrackerItems();
+  const item = items.find(i => String(i.oppId) === String(oppId));
+  if (!item) return;
+  item.status = newStatus;
+  saveTrackerItems(items);
+  renderTracker();
+  showToast(`Moved to "${newStatus.replace('inprogress','In Progress')}" 📋`, '');
+}
+
+function removeFromTracker(oppId) {
+  let items = getTrackerItems();
+  items = items.filter(i => String(i.oppId) !== String(oppId));
+  saveTrackerItems(items);
+  renderTracker();
+}
+
+function editTrackerNote(oppId) {
+  const items = getTrackerItems();
+  const item = items.find(i => String(i.oppId) === String(oppId));
+  if (!item) return;
+  const note = prompt('Add a note for this application:', item.note || '');
+  if (note === null) return;
+  item.note = note;
+  saveTrackerItems(items);
+  renderTracker();
+}
+
+// ═══════════════════════════════════════════
+// MATCH SCORE TOOLTIP
+// ═══════════════════════════════════════════
+function buildMatchPill(score, reasons) {
+  const user = DB.getCurrentUser();
+  const profile = user && user.profile ? user.profile : null;
+
+  // Build dynamic reasons based on profile if available
+  const rows = [];
+  if (profile && profile.stage) {
+    rows.push({ icon: '📍', text: `Stage: ${profile.stage}` });
+  }
+  if (profile && profile.geo) {
+    rows.push({ icon: '🌍', text: `Location: ${profile.geo.replace(/[^\w\s\/]/gu,'').trim()}` });
+  }
+  if (profile && profile.sectors && profile.sectors.length) {
+    rows.push({ icon: '🏷', text: profile.sectors.slice(0,2).map(s=>s.replace(/[^\w\s\/]/g,'').trim()).join(', ') });
+  }
+
+  // Fallback generic reasons
+  const displayRows = rows.length ? rows : (reasons || []).map((r,i) => ({ icon: ['✓','✓','✓'][i] || '✓', text: r }));
+
+  const tooltipHtml = `
+    <div class="match-tooltip">
+      <div class="match-tooltip-title">Why this score?</div>
+      <div class="match-tooltip-score">${score}% match</div>
+      ${displayRows.map(r => `
+        <div class="match-tooltip-row">
+          <span class="mtr-icon">${r.icon}</span>
+          <span>${r.text}</span>
+        </div>`).join('')}
+      ${!profile ? `<div style="margin-top:8px;font-size:10px;color:rgba(255,255,255,0.35);border-top:1px solid rgba(255,255,255,0.08);padding-top:7px">Complete your profile for personalised scores</div>` : ''}
+    </div>`;
+
+  return `<span class="match-pill-wrap">
+    <span class="match-pill">✦ ${score}% match</span>
+    ${tooltipHtml}
+  </span>`;
+}
+
+// ═══════════════════════════════════════════
+// MOBILE NAVIGATION
+// ═══════════════════════════════════════════
+function toggleMobileDrawer() {
+  const drawer = document.getElementById('mobile-drawer');
+  const hamburger = document.getElementById('nav-hamburger');
+  const isOpen = drawer.classList.contains('open');
+  if (isOpen) { closeMobileDrawer(); return; }
+  drawer.classList.add('open');
+  hamburger.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  syncMobileDrawerUser();
+}
+
+function closeMobileDrawer() {
+  const drawer = document.getElementById('mobile-drawer');
+  const hamburger = document.getElementById('nav-hamburger');
+  drawer.classList.remove('open');
+  hamburger.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function syncMobileDrawerUser() {
+  const user = DB.getCurrentUser();
+  const drawerUser = document.getElementById('mobile-drawer-user');
+  const drawerAvatar = document.getElementById('mobile-drawer-avatar');
+  const drawerName = document.getElementById('mobile-drawer-name');
+  const drawerType = document.getElementById('mobile-drawer-type');
+  const drawerSignin = document.getElementById('drawer-signin-btn');
+  const drawerSignout = document.getElementById('drawer-signout-btn');
+  const drawerFounder = document.getElementById('drawer-founder-section');
+  const drawerInvestor = document.getElementById('drawer-investor-section');
+  const drawerAdmin = document.getElementById('drawer-admin-section');
+
+  if (user) {
+    drawerUser.classList.remove('hidden');
+    const initials = user.name.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
+    drawerAvatar.textContent = initials;
+    drawerName.textContent = user.name;
+    drawerType.textContent = user.type === 'investor' ? '🏦 Investor / Funder' : user.type === 'admin' ? '⚡ Super Admin' : '🚀 Founder';
+    drawerSignin.classList.add('hidden');
+    drawerSignout.classList.remove('hidden');
+    drawerFounder.style.display = user.type === 'founder' ? 'block' : 'none';
+    drawerInvestor.style.display = (user.type === 'investor' || user.type === 'admin') ? 'block' : 'none';
+    drawerAdmin.style.display = (user.type === 'admin' || user.email === ADMIN_EMAIL) ? 'block' : 'none';
+  } else {
+    drawerUser.classList.add('hidden');
+    drawerSignin.classList.remove('hidden');
+    drawerSignout.classList.add('hidden');
+    drawerFounder.style.display = 'none';
+    drawerInvestor.style.display = 'none';
+    drawerAdmin.style.display = 'none';
+  }
+}
+
+function setActiveTab(name) {
+  document.querySelectorAll('.mobile-tab-btn').forEach(b => b.classList.remove('active'));
+  const tab = document.getElementById('tab-' + name);
+  if (tab) tab.classList.add('active');
+}
+
+function handleTrackerTab() {
+  const user = DB.getCurrentUser();
+  if (!user) { openModal('authModal'); return; }
+  showView('tracker'); setActiveTab('tracker');
+}
+
+function handleProfileTab() {
+  const user = DB.getCurrentUser();
+  if (!user) { openModal('authModal'); return; }
+  showView('profile'); setActiveTab('profile');
+}
+
+// Sync tab bar active state when showView is called
+const _origShowView = showView;
+// (tab sync is handled inline in setActiveTab calls above)
+// ═══════════════════════════════════════════
+// GOOGLE AUTH — Full Implementation
+// ═══════════════════════════════════════════
+//
+// HOW TO ENABLE REAL GOOGLE SIGN-IN:
+//   1. Go to console.cloud.google.com
+//   2. Create a project → APIs & Services → Credentials
+//   3. Create OAuth 2.0 Client ID → Web Application
+//   4. Add your domain to "Authorised JavaScript origins"
+//      e.g. https://yourdomain.com OR http://localhost for local dev
+//   5. Paste the Client ID below and redeploy
+//
+// When GOOGLE_CLIENT_ID is empty, the app shows a realistic
+// account picker demo so the prototype is fully testable.
+// ═══════════════════════════════════════════
+
+const GOOGLE_CLIENT_ID = ''; // ← paste your Client ID here
+
+// Demo accounts shown in the picker when no Client ID is configured
+const DEMO_GOOGLE_ACCOUNTS = [
+  {
+    name: 'Alex Johnson',
+    email: 'alex.johnson@gmail.com',
+    initials: 'AJ',
+    color: '#4285F4',
+    type: 'founder'
+  },
+  {
+    name: 'Priya Sharma',
+    email: 'priya.sharma@gmail.com',
+    initials: 'PS',
+    color: '#34A853',
+    type: 'founder'
+  }
+];
+
+let _googleAuthMode  = 'signin';
+let _googleAuthType  = 'founder';
+let _googlePickerOpen = false;
+
+// ── Entry point ──────────────────────────────────────────────────
+function handleGoogleAuth(mode) {
+  _googleAuthMode = mode;
+  _googleAuthType = selectedUserType || 'founder';
+
+  const btn = document.getElementById(mode === 'signin' ? 'google-signin-btn' : 'google-signup-btn');
+  if (btn) { btn.classList.add('loading'); btn.querySelector('.google-btn-text').textContent = 'Connecting'; }
+
+  setTimeout(() => {
+    if (btn) { btn.classList.remove('loading'); btn.querySelector('.google-btn-text').textContent = 'Continue with Google'; }
+
+    if (GOOGLE_CLIENT_ID) {
+      // Real Google OAuth flow
+      loadGSIAndAuth();
+    } else {
+      // Demo flow — show realistic account picker
+      openGooglePicker();
+    }
+  }, 600);
+}
+
+// ── Real OAuth ────────────────────────────────────────────────────
+function loadGSIAndAuth() {
+  if (window.google && window.google.accounts) {
+    triggerGooglePopup();
+    return;
+  }
+  const script = document.createElement('script');
+  script.src = 'https://accounts.google.com/gsi/client';
+  script.async = true; script.defer = true;
+  script.onload = triggerGooglePopup;
+  script.onerror = () => showToast('Could not load Google auth. Check your connection.', 'error');
+  document.head.appendChild(script);
+}
+
+function triggerGooglePopup() {
+  try {
+    google.accounts.oauth2.initTokenClient({
+      client_id: GOOGLE_CLIENT_ID,
+      scope: 'openid email profile',
+      prompt: 'select_account',
+      callback: (response) => {
+        if (response.error) {
+          showToast('Google sign-in cancelled', '');
+          return;
+        }
+        fetchGoogleProfile(response.access_token);
+      }
+    }).requestAccessToken();
+  } catch(e) {
+    showToast('Google sign-in failed. Try the email option below.', 'error');
+  }
+}
+
+function fetchGoogleProfile(accessToken) {
+  showToast('Verifying with Google…');
+  fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+    headers: { Authorization: `Bearer ${accessToken}` }
+  })
+  .then(r => r.json())
+  .then(profile => {
+    if (!profile.email) { showToast('Google sign-in failed — try again', 'error'); return; }
+    completeGoogleSignIn({
+      name: profile.name,
+      email: profile.email,
+      picture: profile.picture,
+      googleId: profile.sub
+    });
+  })
+  .catch(() => showToast('Could not reach Google. Please try again.', 'error'));
+}
+
+// ── Demo account picker ───────────────────────────────────────────
+function openGooglePicker() {
+  _googlePickerOpen = true;
+  const overlay = document.getElementById('googlePickerOverlay');
+  const container = document.getElementById('picker-accounts');
+  const title = document.getElementById('picker-title');
+  const sub = document.getElementById('picker-sub');
+
+  title.textContent = _googleAuthMode === 'signin' ? 'Choose an account' : 'Continue as…';
+  sub.textContent = 'to continue to FundMap';
+
+  // Build account rows from demo accounts + any real Google users saved
+  const savedUsers = DB.getUsers().filter(u => u.provider === 'google');
+  const allAccounts = [
+    ...savedUsers.map(u => ({
+      name: u.name, email: u.email,
+      initials: u.name.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase(),
+      color: u.type === 'investor' ? '#34A853' : '#4285F4',
+      type: u.type, _realUser: u
+    })),
+    ...DEMO_GOOGLE_ACCOUNTS.filter(d => !savedUsers.find(u => u.email === d.email))
+  ];
+
+  container.innerHTML = allAccounts.map((acc, i) => `
+    <div class="google-account-row" onclick="selectGoogleAccount(${i})" data-idx="${i}">
+      <div class="google-account-avatar" style="background:${acc.color}">
+        ${acc.picture
+          ? `<img class="avatar-img" src="${acc.picture}" alt="${acc.name}" onerror="this.parentElement.textContent='${acc.initials}'">`
+          : acc.initials}
+      </div>
+      <div class="google-account-info">
+        <div class="google-account-name">${acc.name}</div>
+        <div class="google-account-email">${acc.email}</div>
+      </div>
+    </div>`).join('');
+
+  // Store for callback
+  window._pickerAccounts = allAccounts;
+
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeGooglePicker() {
+  document.getElementById('googlePickerOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+  _googlePickerOpen = false;
+}
+
+function renderGoogleConnectionSection() {
+  const el = document.getElementById('google-connection-section');
+  if (!el) return;
+  const user = DB.getCurrentUser();
+  if (!user) { el.innerHTML = ''; return; }
+
+  if (user.provider === 'google' || user.googleId) {
+    // Connected
+    el.innerHTML = `
+      <div class="google-connect-prompt" style="background:#f0fdf4;border-color:#86efac">
+        <div class="google-connect-left">
+          <svg width="22" height="22" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          <div class="google-connect-info">
+            <strong>Connected with Google</strong>
+            <span>${user.email}</span>
+          </div>
+        </div>
+        <span class="google-connected-badge">✓ Connected</span>
+      </div>`;
+  } else {
+    // Not connected — show connect prompt
+    el.innerHTML = `
+      <div class="google-connect-prompt">
+        <div class="google-connect-left">
+          <svg width="22" height="22" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          <div class="google-connect-info">
+            <strong>Connect your Google account</strong>
+            <span>Sign in faster and sync your profile automatically</span>
+          </div>
+        </div>
+        <button class="google-btn" onclick="connectGoogleToAccount()" style="width:auto;padding:8px 16px;font-size:13px">
+          <svg width="14" height="14" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 002.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 01-7.18-2.54H1.83v2.07A8 8 0 008.98 17z"/><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 010-3.04V5.41H1.83a8 8 0 000 7.18l2.67-2.07z"/><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 001.83 5.4L4.5 7.49a4.77 4.77 0 014.48-3.3z"/></svg>
+          <span class="google-btn-text">Connect Google</span>
+        </button>
+      </div>`;
+  }
+}
+
+function connectGoogleToAccount() {
+  _googleAuthMode = 'connect';
+  const btn = document.querySelector('#google-connection-section .google-btn');
+  if (btn) { btn.classList.add('loading'); btn.querySelector('.google-btn-text').textContent = 'Connecting'; }
+  setTimeout(() => {
+    if (btn) { btn.classList.remove('loading'); btn.querySelector('.google-btn-text').textContent = 'Connect Google'; }
+    if (GOOGLE_CLIENT_ID) {
+      loadGSIAndAuth();
+    } else {
+      // Demo: pick an account and link it
+      _googleAuthMode = 'connect';
+      openGooglePicker();
+    }
+  }, 600);
+}
+
+function selectGoogleAccount(idx) {
+  const acc = window._pickerAccounts[idx];
+  if (!acc) return;
+
+  // Animate selection
+  const rows = document.querySelectorAll('.google-account-row');
+  rows.forEach(r => r.style.opacity = '0.4');
+  if (rows[idx]) rows[idx].style.opacity = '1';
+
+  setTimeout(() => {
+    closeGooglePicker();
+    // Small delay for a realistic feel
+    setTimeout(() => {
+      if (acc._realUser) {
+        // Known user — sign straight in
+        completeGoogleSignIn({ name: acc.name, email: acc.email, googleId: acc._realUser.googleId, _existingUser: acc._realUser });
+      } else {
+        // Demo account — create/sign in
+        completeGoogleSignIn({ name: acc.name, email: acc.email, googleId: 'demo_' + acc.email, _demoType: acc.type });
+      }
+    }, 300);
+  }, 250);
+}
+
+function addNewGoogleAccount() {
+  closeGooglePicker();
+  // Show a simple email prompt in demo mode
+  setTimeout(() => {
+    const email = prompt('Enter the Google account email you want to use:');
+    if (!email || !email.includes('@')) return;
+    const name = email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    completeGoogleSignIn({ name, email, googleId: 'demo_' + email });
+  }, 200);
+}
+
+// ── Shared completion logic (real + demo) ─────────────────────────
+function completeGoogleSignIn({ name, email, picture, googleId, _existingUser, _demoType }) {
+  const users = DB.getUsers();
+  let user = _existingUser || users.find(u => u.email === email);
+
+  if (user) {
+    // Update picture if available
+    if (picture && !user.picture) { user.picture = picture; DB.saveUsers(users); }
+    DB.setCurrentUser(user);
+    closeModal('authModal');
+    updateNavForUser(user);
+    // Show avatar if Google picture available
+    if (user.picture) injectGoogleAvatar(user.picture);
+    showToast(`Welcome back, ${user.name.split(' ')[0]}! 👋`, 'success');
+    setTimeout(() => {
+      if (user.type === 'investor') showView('investor');
+      else if (user.type === 'admin') showView('admin');
+      else showView('directory');
+    }, 350);
+  } else {
+    // New user via Google
+    const newUser = {
+      id: 'guser_' + Date.now(),
+      name: name || email.split('@')[0],
+      email,
+      picture: picture || null,
+      googleId,
+      type: _demoType || _googleAuthType,
+      provider: 'google',
+      createdAt: new Date().toISOString(),
+      profile: {}
+    };
+    users.push(newUser);
+    DB.saveUsers(users);
+    DB.setCurrentUser(newUser);
+    closeModal('authModal');
+    updateNavForUser(newUser);
+    if (newUser.picture) injectGoogleAvatar(newUser.picture);
+    if (newUser.type === 'investor') {
+      showToast(`Welcome, ${newUser.name.split(' ')[0]}! Let's get your listings live 🚀`, 'success');
+      setTimeout(() => showView('investor'), 400);
+    } else {
+      setTimeout(() => startOnboarding(newUser), 400);
+    }
+  }
+}
+
+// Inject Google profile picture into avatar elements
+function injectGoogleAvatar(pictureUrl) {
+  if (!pictureUrl) return;
+  const initEls = document.querySelectorAll('#user-avatar-initials, #dropdown-avatar-large, #mobile-drawer-avatar');
+  initEls.forEach(el => {
+    const img = document.createElement('img');
+    img.src = pictureUrl;
+    img.alt = 'Profile';
+    img.style.cssText = 'width:100%;height:100%;border-radius:inherit;object-fit:cover;position:absolute;inset:0';
+    img.onerror = () => img.remove();
+    el.style.position = 'relative';
+    el.style.overflow = 'hidden';
+    el.appendChild(img);
+  });
+}
+
+// Close picker on backdrop click
+document.getElementById('googlePickerOverlay').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('googlePickerOverlay')) closeGooglePicker();
+});
+
+// ── showGoogleSetupPrompt kept for edge cases ─────────────────────
+function showGoogleSetupPrompt() {
+  showToast('Add your Google Client ID to the JS to enable real sign-in.', '');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   // Restore session
   const user = DB.getCurrentUser();
-  if (user) updateNavForUser(user);
+  if (user) {
+    updateNavForUser(user);
+    // Recalc match scores if user completed onboarding
+    if (user.profile && user.profile.onboarded) {
+      window._OPPS = opportunities;
+      recalcMatchScores(user.profile);
+    }
+  }
 
   // Init directory
   renderOpps(getAllOpps());
@@ -2857,5 +4562,147 @@ document.addEventListener('DOMContentLoaded', () => {
   activityLog = JSON.parse(localStorage.getItem('fundmap_activity') || '[]');
 });
 </script>
+<!-- ══ GOOGLE ACCOUNT PICKER ══ -->
+<div class="google-picker-overlay" id="googlePickerOverlay">
+  <div class="google-picker">
+    <div class="google-picker-header">
+      <div class="google-picker-logo">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        </svg>
+        <span>Sign in with Google</span>
+      </div>
+      <div class="google-picker-title" id="picker-title">Choose an account</div>
+      <div class="google-picker-sub" id="picker-sub">to continue to FundMap</div>
+    </div>
+    <div class="google-picker-accounts" id="picker-accounts">
+      <!-- populated dynamically -->
+    </div>
+    <div class="google-picker-divider"></div>
+    <div class="google-picker-add-row" onclick="addNewGoogleAccount()">
+      <div class="google-picker-add-icon">＋</div>
+      <div class="google-picker-add-text">Use another account</div>
+    </div>
+    <div class="google-picker-footer">
+      <button class="google-picker-cancel" onclick="closeGooglePicker()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ONBOARDING MODAL ══ -->
+<div class="onboarding-overlay" id="onboardingOverlay">
+  <div class="onboarding-modal">
+    <div class="onboarding-header">
+      <div class="onboarding-step-dots">
+        <div class="onboarding-step-dot active" id="ob-dot-0"></div>
+        <div class="onboarding-step-dot" id="ob-dot-1"></div>
+        <div class="onboarding-step-dot" id="ob-dot-2"></div>
+        <div class="onboarding-step-dot" id="ob-dot-3"></div>
+      </div>
+      <h2 id="ob-heading">Welcome to FundMap 🎉</h2>
+      <p id="ob-subheading">Let's personalise your experience in 3 quick steps so we can match you to the right funding.</p>
+    </div>
+    <div class="onboarding-progress-bar">
+      <div class="onboarding-progress-fill" id="ob-progress" style="width:0%"></div>
+    </div>
+    <div class="onboarding-body">
+
+      <!-- Step 0: Welcome -->
+      <div class="onboarding-step active" id="ob-step-0">
+        <div class="onboarding-welcome-screen">
+          <ul class="onboarding-welcome-list">
+            <li><span class="wl-icon">🔍</span>Browse 2,400+ verified funding opportunities</li>
+            <li><span class="wl-icon">✦</span>Get a personalised match score for every listing</li>
+            <li><span class="wl-icon">📊</span>Track all your applications in one kanban board</li>
+            <li><span class="wl-icon">🔔</span>Never miss a deadline with smart reminders</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Step 1: Sector -->
+      <div class="onboarding-step" id="ob-step-1">
+        <div class="onboarding-question">What sector is your startup in?</div>
+        <p class="onboarding-hint">Select all that apply — we'll use this to filter relevant grants and programmes.</p>
+        <div class="onboarding-chips" id="ob-chips-sector">
+          <span class="onboarding-chip" onclick="toggleChip(this,'sector')">🤖 AI / ML</span>
+          <span class="onboarding-chip" onclick="toggleChip(this,'sector')">🌱 Climate Tech</span>
+          <span class="onboarding-chip" onclick="toggleChip(this,'sector')">🏥 Health / Bio</span>
+          <span class="onboarding-chip" onclick="toggleChip(this,'sector')">💰 Fintech</span>
+          <span class="onboarding-chip" onclick="toggleChip(this,'sector')">🔬 Deep Tech</span>
+          <span class="onboarding-chip" onclick="toggleChip(this,'sector')">🛍 Consumer</span>
+          <span class="onboarding-chip" onclick="toggleChip(this,'sector')">🏢 B2B SaaS</span>
+          <span class="onboarding-chip" onclick="toggleChip(this,'sector')">🌍 Impact / Social</span>
+          <span class="onboarding-chip" onclick="toggleChip(this,'sector')">⚡ Energy</span>
+          <span class="onboarding-chip" onclick="toggleChip(this,'sector')">🚗 Mobility</span>
+          <span class="onboarding-chip" onclick="toggleChip(this,'sector')">🎮 Gaming / Media</span>
+          <span class="onboarding-chip" onclick="toggleChip(this,'sector')">Other</span>
+        </div>
+      </div>
+
+      <!-- Step 2: Stage -->
+      <div class="onboarding-step" id="ob-step-2">
+        <div class="onboarding-question">What stage is your startup at?</div>
+        <p class="onboarding-hint">This helps us surface the most relevant funding rounds and accelerators.</p>
+        <div class="onboarding-chips" id="ob-chips-stage">
+          <span class="onboarding-chip" onclick="toggleChip(this,'stage','single')">💡 Idea stage<br><small style="font-weight:400;opacity:0.7">Haven't built anything yet</small></span>
+          <span class="onboarding-chip" onclick="toggleChip(this,'stage','single')">🛠 Building MVP<br><small style="font-weight:400;opacity:0.7">Pre-revenue, under $50K raised</small></span>
+          <span class="onboarding-chip" onclick="toggleChip(this,'stage','single')">🌱 Pre-seed<br><small style="font-weight:400;opacity:0.7">Early traction, raising first round</small></span>
+          <span class="onboarding-chip" onclick="toggleChip(this,'stage','single')">🌿 Seed<br><small style="font-weight:400;opacity:0.7">$250K–$2M raised</small></span>
+          <span class="onboarding-chip" onclick="toggleChip(this,'stage','single')">🚀 Series A+<br><small style="font-weight:400;opacity:0.7">$2M+ raised</small></span>
+        </div>
+      </div>
+
+      <!-- Step 3: Geography -->
+      <div class="onboarding-step" id="ob-step-3">
+        <div class="onboarding-question">Where is your startup based?</div>
+        <p class="onboarding-hint">Many grants and accelerators are region-specific — this ensures you only see eligible opportunities.</p>
+        <div class="onboarding-chips" id="ob-chips-geo">
+          <span class="onboarding-chip" onclick="toggleChip(this,'geo','single')">🇺🇸 United States</span>
+          <span class="onboarding-chip" onclick="toggleChip(this,'geo','single')">🇬🇧 United Kingdom</span>
+          <span class="onboarding-chip" onclick="toggleChip(this,'geo','single')">🇪🇺 Europe (EU)</span>
+          <span class="onboarding-chip" onclick="toggleChip(this,'geo','single')">🇮🇳 India</span>
+          <span class="onboarding-chip" onclick="toggleChip(this,'geo','single')">🌍 Africa</span>
+          <span class="onboarding-chip" onclick="toggleChip(this,'geo','single')">🌏 Southeast Asia</span>
+          <span class="onboarding-chip" onclick="toggleChip(this,'geo','single')">🇨🇦 Canada</span>
+          <span class="onboarding-chip" onclick="toggleChip(this,'geo','single')">🌐 Global / Remote</span>
+        </div>
+      </div>
+
+    </div>
+    <div class="onboarding-footer">
+      <button class="onboarding-skip" onclick="skipOnboarding()">Skip for now</button>
+      <button class="btn btn-primary" id="ob-next-btn" onclick="onboardingNext()">Get Started →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ REJECT REASON MODAL — must be last in DOM for correct stacking ══ -->
+<div class="modal-overlay" id="rejectModal">
+  <div class="reject-modal">
+    <div class="reject-modal-header">
+      <h3>Reject Submission</h3>
+      <p>Select a reason — this will be sent to the submitter.</p>
+    </div>
+    <div class="reject-modal-body">
+      <button class="reject-reason-btn" onclick="selectRejectReason(this)">🔍 Duplicate — we already have this opportunity listed</button>
+      <button class="reject-reason-btn" onclick="selectRejectReason(this)">📋 Incomplete information — key fields are missing or vague</button>
+      <button class="reject-reason-btn" onclick="selectRejectReason(this)">❌ Cannot verify — organisation or programme cannot be confirmed</button>
+      <button class="reject-reason-btn" onclick="selectRejectReason(this)">🚫 Ineligible type — does not meet FundMap listing standards</button>
+      <button class="reject-reason-btn" onclick="selectRejectReason(this)">💀 Expired — this programme has already closed or ended</button>
+      <div style="margin-top:12px">
+        <label style="font-size:11px;color:rgba(255,255,255,0.35);display:block;margin-bottom:6px;font-weight:600;letter-spacing:0.04em">CUSTOM NOTE (OPTIONAL)</label>
+        <textarea id="rejectCustomNote" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:10px 12px;font-family:var(--font-body);font-size:13px;color:rgba(255,255,255,0.7);outline:none;min-height:60px;resize:vertical;box-sizing:border-box" placeholder="Add any additional context for the submitter..."></textarea>
+      </div>
+    </div>
+    <div class="reject-modal-footer">
+      <button class="action-btn action-btn-view" onclick="closeModal('rejectModal')">Cancel</button>
+      <button class="action-btn action-btn-reject" onclick="confirmReject()">Confirm Rejection</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
